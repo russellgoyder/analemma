@@ -1,0 +1,152 @@
+
+# setup
+read `GA.mpl`;
+with(GA);
+metric(SA);
+
+fs:=proc(func)
+    factor(simplify(func));
+end:
+
+se:=proc(func)
+    simplify(expand(func));
+end:
+
+# orbit in 1-2 plane
+Lhat := e[1,2];
+
+# write down spinor solution
+A*(cos(omega*s)+Lhat*sin(omega*s)) + B*(cos(omega*s)-Lhat*sin(omega*s));
+U(s) := %;
+
+# check
+U(s):
+diff(%,s):
+diff(%,s):
+fs(% + omega^2*U(s));
+
+# form r(s)
+U(s) &@ reverse(U(s));
+subs(omega = twoomega/2,%);
+combine(%,trig);
+subs(twoomega = 2*omega,%);
+r(s) := %;
+
+# integrate to get t(s);
+integrate( r(s), s);
+collect(%,s);
+t(s) := %;
+
+# check
+diff(t(s),s) - r(s):
+se(%);
+
+# get phi(s)
+
+# first write in terms of t
+sqrt(r(t)) * (cos(phi(t)/2) - e[1]&@e[2]*sin(phi(t)/2));
+U(t) := %;
+
+# check
+U(t) &@ reverse(U(t)):
+fs(%);
+
+# position vector
+U(t) &@ e[1] &@ reverse(U(t));
+combine(%,trig);
+collect(%,r(t));
+x(t) := %;
+
+# can see that tan(phi) = coeff(e[2]) / coeff(e[1])
+
+# get x(s)
+U(s) &@ e[1] &@ reverse(U(s));
+subs(omega = twoomega/2,%);
+combine(%,trig);
+cc(%);
+
+# write x(s) by hand
+((A^2+B^2)*cos(2*omega*s)+2*A*B) * e[1] + (B^2-A^2)*sin(2*omega*s) * e[2];
+x(s) := %;
+
+# check
+U(s) &@ e[1] &@ reverse(U(s)) - x(s):
+se(%);
+
+# write out tan(phi(s)) by hand
+(B^2-A^2)*sin(2*omega*s) / ((A^2+B^2)*cos(2*omega*s)+2*A*B);
+tanphi(s) := %;
+
+# get sin and cos phi
+( (B^2-A^2)*sin(2*omega*s) )^2 + ( (A^2+B^2)*cos(2*omega*s)+2*A*B )^2;
+fs(%);
+phiDenom2 := %;
+
+# take positive root
+(A^2+2*A*B*cos(2*omega*s)+B^2);
+phiDenom := %;
+
+# write down sin
+numer(tanphi(s)) / phiDenom;
+sinphi(s) := %;
+
+# and cos
+denom(tanphi(s)) / phiDenom;
+cosphi(s) := %;
+
+# check
+sinphi(s)^2 + cosphi(s)^2 - 1;
+se(%);
+
+# another check
+x(t);
+subs(r(t) = r(s), sin(phi(t)) = sinphi(s), cos(phi(t)) = cosphi(s), %):
+se(% - x(s));
+
+# shape of orbit?
+
+# prepare to solve
+subs( cos(2*omega*s) = Q, r(s) );
+tmp_r := %;
+subs( cos(2*omega*s) = Q, cosphi(s) );
+tmp_cosphi := %;
+
+# solve for Q in cosphi equation
+cos(phi) - tmp_cosphi;
+solve(%,Q);
+subs(Q = %, tmp_r);
+fs(%);
+tmp := %;
+
+# simplify by hand
+r(phi) := r0 / (1 + ee*cos(phi));
+r0_subs := (A^2-B^2)^2/(A^2+B^2);
+ee_subs := -2*A*B/(A^2+B^2);
+
+# check
+tmp - r(phi);
+subs(r0 = r0_subs, ee = ee_subs, %);
+se(%);
+
+#
+sqrt(a^2-b^2)/a;
+subs( b = A^2-B^2, a = A^2+B^2, % );
+fs(%);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

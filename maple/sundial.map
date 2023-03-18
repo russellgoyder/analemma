@@ -1,0 +1,989 @@
+
+# ----------------------------------------------------------------- #
+# Initial set up of basic quantities
+# ----------------------------------------------------------------- #
+
+# setup
+read `GA.mpl`;
+with(GA);
+metric(SA);
+
+fs:=proc(func)
+    factor(simplify(func));
+end:
+
+se:=proc(func)
+    simplify(expand(func));
+end:
+
+isOne := proc( func, sn )
+    func:
+    numer(%) - sn*denom(%):
+    fs(se(%));
+end:
+
+goPaper := proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Tau = i, Nu = d, tau = iota, nu = delta, %);
+end:
+
+read `sundial_setup.map`;
+
+# ----------------------------------------------------------------- #
+# Get meridian plane
+# ----------------------------------------------------------------- #
+
+# all the special cases are for a style in the meridian plane, so make that assumption at this stage to simplify the algebra. Put into a function
+
+goMeridian := proc( func )
+    func:
+    subs( nu = 0, % ):
+    eval(%):
+    se(%):
+    fs(%):
+end:
+
+goTmt := proc( func )
+    func:
+    subs( theta = tmt + tau, % ):
+    se(%):
+end:
+
+# need to do shadow stick, solar plane and denominator
+st := goMeridian( st ):
+SP := goMeridian( SP ):
+
+goMeridian( cosXi_subs ):
+goTmt( % ):
+collect( collect( %, sin(tmt) ), cos(tmt) ):
+cosXi_subs := %:
+
+# have a look
+'st' = vpn( st );
+'SP' = bpn( SP );
+'cosXi_subs' = cosXi_subs;
+
+# OK, so now see if I can get a general hour angle vs bearing relationship. First check that meridian plane is what I think it is. First get as a special case of SP
+goNoon := proc( func )
+    func:
+    subs( sin(sigma) = cos(sigma)*cos(alpha)*sin(psi)/cos(psi), % ):
+    subs( cos(sigma) = cos(psi) / R(psi,alpha), %);
+    fs(se(%)):
+end:
+
+# handle Xi
+goNoon( cosXi_subs );
+
+# can see that we have
+cosXi_noon := ( -sin(alpha)*cos(psi)*cos(tmt) + cos(alpha)*sin(tmt) ) / R(psi,alpha);
+R_subs := sqrt(cos(psi)^2 + cos(alpha)^2*sin(psi)^2);
+
+# get meridian plane
+goNoon( SP ):
+goTmt( % ):
+MP1 := %:
+
+# have a look
+bpn( MP1 );
+
+# this should be one, so can get sinXi
+sinXi_noon := solve( %[3] = 1, sinXi );
+
+# check
+fs( sinXi_noon^2 + cosXi_noon^2 - 1 ):
+subs( R(psi,alpha) = R_subs, %):
+fs(%);
+
+# fine. So meridian plane is indeed n[3] ^ n[1]
+MP := n[3] &^ n[1];
+
+# ----------------------------------------------------------------- #
+# Get hour angle
+# ----------------------------------------------------------------- #
+
+# angle between these two planes is the hour angle. Look at cosine
+project(MP &@ SP,0):
+fs(%):
+goTmt(%):
+collect( collect( numer(%), sin(tmt) ), cos(tmt) ) / denom(%):
+cosHA := %;
+
+# and sine (done by hand)
+sinHA := (cos(psi)*sin(sigma) - sin(psi)*cos(alpha)*cos(sigma)) / sinXi;
+
+# check
+sinHA^2 + cosHA^2 - 1:
+subs( sinXi = sqrt(1-cosXi_subs^2), % ):
+fs(%);
+
+# convenient to define this
+tanHA := sinHA / cosHA;
+
+# ----------------------------------------------------------------- #
+# Get shadow vector
+# ----------------------------------------------------------------- #
+
+# find plane perpendicular to both GP and SP. Line of intersection is the dual of this plane
+project(SP &@ GP,2):
+fs(%):
+% &@ e[1,2,3]:
+fs(%):
+shad := %:
+
+# check
+project( shad &@ GP, 3 ):
+fs(%):
+
+# have a look
+'shad' = goTmt( vpn( shad ) );
+
+# NB this is not normalised
+
+# ----------------------------------------------------------------- #
+# Get the 12 o'clock line
+# ----------------------------------------------------------------- #
+
+# intersection of meridian plane and ground plane
+project(MP &@ GP,2):
+fs(%):
+% &@ e[1,2,3]:
+fs(%):
+noonShad := %:
+
+# need to normalise by the angle between the two planes
+noonShad := 1/DD(Tau,Nu)*noonShad:
+DD_subs := sqrt( sin(Tau)^2*cos(Nu)^2 + cos(Tau)^2 );
+
+# have a look
+vpn( noonShad );
+
+# looks OK. Check unit
+noonShad &. noonShad:
+subs( DD(Tau,Nu) = DD_subs, %):
+fs(%);
+
+# fine. Check by getting same result from goNoon( shad )
+goNoon( shad ):
+vpn(%):
+goTmt(%):
+subs( sinXi = sinXi_noon, %):
+fs(% - vpn( DD(Tau,Nu)*noonShad )); 
+
+# ----------------------------------------------------------------- #
+# Get better forms of SP and shad using hour angle
+# ----------------------------------------------------------------- #
+
+# first thing get a simpler shad vector in terms of HA
+solve( cos(mu) = cosHA, sin(tmt) ):
+subs( sin(tmt) = %, goTmt( vpn( shad ) ) ):
+tmp := fs( % ):
+solve( sin(mu) = sinHA, sin(sigma) ):
+subs( sin(sigma) = %, tmp ):
+fs( % ):
+shad_better := %[1]*n[1] + %[2]*n[2] + %[3]*n[3];
+
+# check
+subs( cos(mu) = cosHA, sin(mu) = sinHA, goTmt(shad - shad_better) ):
+fs(%);
+
+# have a look
+vpn( shad_better );
+
+# get better solar plane
+solve( cos(mu) = cosHA, sin(tmt) ):
+subs( sin(tmt) = %, goTmt( bpn( SP ) ) ):
+tmp := fs( % ):
+solve( sin(mu) = sinHA, sin(sigma) ):
+subs( sin(sigma) = %, tmp ):
+fs( % ):
+SP_better := %[1]*n[1]&^n[2] + %[2]*n[2]&^n[3] + %[3]*n[3]&^n[1]:
+
+# have a look
+bpn( SP_better );
+
+# check
+subs( cos(mu) = cosHA, sin(mu) = sinHA, goTmt(SP - SP_better) ):
+fs(%);
+
+# and check still normalised
+SP_better &@ SP_better + 1:
+numer(%):
+fs(%):
+subs( cos(mu) = cosHA, sin(mu) = sinHA, % ):
+subs( sinXi = sqrt(1-cosXi_subs^2) ,% ):
+fs(%);
+
+# ----------------------------------------------------------------- #
+# Get angle between shadow stick and shadow (beta)
+# ----------------------------------------------------------------- #
+
+# now make rotor
+cos(beta/2) - SP_better*sin(beta/2):
+R_shadow := %:
+
+# and get rotated shadow stick. First need a function
+combine_beta:=proc(func)
+    func;
+    subs(sin(psi) = sinpsi, cos(psi) = cospsi, %):
+    subs(sin(alpha) = sinalpha, cos(alpha) = cosalpha, %):
+    subs(sin(sigma) = sinsigma, cos(sigma) = cossigma, %): 
+    subs(sin(mu) = sinmu, cos(mu) = cosmu, %):
+    subs(sin(tau) = sintau, cos(tau) = costau, %):  
+    subs(sin(theta) = sintheta, cos(theta) = costheta, %):  
+    combine(%,trig):
+    fs(%);
+    subs(sinpsi = sin(psi), cospsi = cos(psi), %):
+    subs(sinalpha = sin(alpha), cosalpha = cos(alpha), %):
+    subs(sinsigma = sin(sigma), cossigma = cos(sigma), %):
+    subs(sinmu = sin(mu), cosmu = cos(mu), %):
+    subs(sintau = sin(tau), costau = cos(tau), %):
+    subs(sintheta = sin(theta), costheta = cos(theta), %):      
+end:
+
+R_shadow &@ st &@ reverse( R_shadow ):
+tmp := combine_beta(%):
+
+# the above is very huge but the following is nice and small
+tmp1 := vpn(tmp);
+rst := tmp1[1]*n[1] + tmp1[2]*n[2] + tmp1[3]*n[3]:
+
+# check
+vpn( rst ) - tmp1;
+
+# OK, so get beta
+(GP &^ rst) &@ e[1,2,3]:
+fs(%):
+subs( sin(beta) = tb*cos(beta), %):
+tanbeta := solve( %, tb );
+
+# best to leave in terms of beta for now I think. 
+
+# ----------------------------------------------------------------- #
+# Get bearing of shadow (zeta)
+# ----------------------------------------------------------------- #
+
+# so to find bearing of shadow
+rst &. noonShad:
+fs(%):
+coszeta := %;
+
+# to get sine, get the "East-West line" by rotating noonShad. First need a rotor
+ewRot := cos(beta/2) - GP*sin(beta/2):
+ewRot &@ noonShad &@ reverse( ewRot ):
+fs(%):
+combine(%,trig):
+se(%):
+ewLine := cc(%);
+
+# check
+noonShad &. ewLine:
+subs( DD(Tau,Nu) = DD_subs, % ):
+fs(%);
+
+# and check
+noonShad &^ ewLine:
+bpn(%):
+subs( DD(Tau,Nu) = DD_subs, % ):
+fs( % - bpn(GP) ):
+subs(beta = Pi/2, %):eval(%);
+
+vpn( ewLine ):
+subs( cos(Tau)^2 = DD_subs^2 - sin(Tau)^2*cos(Nu)^2, %):
+fs(%);
+
+# so EW line is
+ewLine:
+subs(beta = Pi/2, %):eval(%):
+ewLine := %;
+
+# so sin(zeta) is
+rst &. ewLine:
+subs( sin(beta) = tanbeta*cos(beta),%):
+fs(%):
+sinzeta := %;
+
+# check
+coszeta:
+subs( sin(beta) = tanbeta*cos(beta),%):
+sinzeta^2 + %^2 - 1:
+subs( DD(Tau,Nu) = DD_subs, numer(%) ):
+fs(%):
+subs( cos(beta)^2 = 1 / (1+tanbeta^2), %):
+fs(%);
+
+# great! Get a nice expression for tanzeta
+sinzeta / subs( sin(beta) = tanbeta*cos(beta),coszeta):
+fs(%);
+
+# try by hand
+tan(mu)*( cos(tau)*cos(Tau) + sin(tau)*sin(Tau)*cos(Nu) ) / 
+( DD(Tau,Nu)^2 - tan(mu)*sin(Nu)*sin(Tau)*( sin(tau)*cos(Tau)-cos(tau)*sin(Tau)*cos(Nu)) ):
+tanzeta := %;
+
+# check
+sinzeta/coszeta - tanzeta:
+subs( DD(Tau,Nu) = DD_subs, % ):
+subs( sin(beta) = tanbeta*cos(beta), % ):
+fs(%);
+
+# fine! 
+
+# ----------------------------------------------------------------- #
+# Get sin and cos beta too
+# ----------------------------------------------------------------- #
+
+# ok for now. Have seen a better way to get beta. These two are the same vectors
+tmp1 := vpn( shad_better );tmp2 := vpn( rst );
+
+# almost - shad_better has length sin(angle between SP and GP)
+SP &. GP:goTmt(%):tmp := %:solve( cos(mu) = cosHA, sin(tmt) ):subs( sin(tmt) = %, tmp ):tmptmp := fs( % ):solve( sin(mu) = sinHA, sin(sigma) ):subs( sin(sigma) = %, tmptmp ):fs( % );
+tmp := %:
+# compare with
+shad_better &. shad_better:
+fs(%):
+se( tmp^2 + % -1 );
+
+# so try for beta again
+tmp1 := vpn( shad_better/X );tmp2 := vpn( rst );
+solve( tmp1[2] - tmp2[2], sin(beta) ):
+tmp_sinbeta := %;
+
+# have sin beta, now get cos
+tmp1[1] - tmp2[1]:
+subs( sin(beta) = tmp_sinbeta, % ):
+fs(%);
+solve( %, cos(beta) ):
+tmp_cosbeta := %;
+
+# check
+tmp1[3] - tmp2[3]:
+subs( sin(beta) = tmp_sinbeta, cos(beta) = tmp_cosbeta, % ):
+fs(%);
+
+# so the end result of all this is a nice form of X
+tmp:
+collect( %, sin(mu) ):
+X_subs := sqrt(1 - %^2);
+
+# so can get forms of sin and cos beta
+sinbeta := numer( tanbeta) / X;
+cosbeta := denom( tanbeta) / X;
+
+# check
+sinbeta^2 + cosbeta^2 - 1:
+fs(%):
+subs( X = X_subs, % ):
+fs(%);
+
+# ----------------------------------------------------------------- #
+# Define ground plane frame here
+# ----------------------------------------------------------------- #
+
+# need ground plane frame
+groundRotate := proc( func )
+    func:
+    R_Tau &@ % &@ reverse( R_Tau ):
+    fs(%):
+    combineStickAngles(%):
+    R_Nu &@ % &@ reverse( R_Nu ):
+    fs(%):
+    combineStickAngles(%):
+    se(%):
+end:
+
+m[1] := groundRotate( n[1] );
+m[2] := groundRotate( n[2] );
+m[3] := groundRotate( n[3] );
+
+# check
+fs( m[1] &^ m[2] &^ m[3] );
+
+# and define projection routine
+vpm := proc(vecin)
+
+	local vec,result,tmp,i,ii;
+
+    vec := project(expand(vecin),1):
+	result:=[seq(0,ii=1..3)];
+    
+    i:=1;
+	tmp:=fs(project(m[1]&@vec,0));
+	result:=subsop(i=tmp,result);
+    i:=2;
+	tmp:=fs(project(m[2]&@vec,0));
+	result:=subsop(i=tmp,result);
+    i:=3;
+    tmp:=fs(project(m[3]&@vec,0));
+	result:=subsop(i=tmp,result);
+    
+end:
+
+# check
+vpm( a*m[1] + b*m[2] + c*m[3] );
+
+# ----------------------------------------------------------------- #
+# Get length of shadow
+# ----------------------------------------------------------------- #
+
+# this vector should be the shadow vector
+shad2 := st + lambda*ss;
+# want it to lie in the ground plane
+GP &^ shad2:
+% &@ e[1,2,3]:
+fs(%):
+solve(%,lambda);
+lambda_subs := %:
+
+# check - is the third component of the projection onto the m-frame zero?
+vpm( shad2 ):
+subs( lambda = lambda_subs, % ):
+tmp := fs(%):
+tmp[3];
+
+# good. Another check - it should lie in the solar plane
+(SP &^ shad2) &@ e[1,2,3]:
+fs(%);
+
+# so I think I have the x and y coords of the shadow point in tmp. Try to simplify in terms of hour angle. First the numerators
+numer( tmp[1] ):
+goTmt(%):
+collect( %, [cos(Nu),sin(Nu),sin(tmt),cos(tmt),cos(tau)] ):subs( sin(tmt) = solve( cos(mu) = cosHA, sin(tmt) ), % ):
+subs( sin(sigma) = solve( sin(mu) = sinHA, sin(sigma) ), % ):
+fs( % ):
+xnum := %;
+
+numer( tmp[2] ):
+goTmt(%):
+collect( %, [cos(Nu),sin(Nu),cos(Tau),sin(Tau),sin(tmt),cos(tmt),cos(tau),sin(tau)] );subs( sin(tmt) = solve( cos(mu) = cosHA, sin(tmt) ), % ):
+subs( sin(sigma) = solve( sin(mu) = sinHA, sin(sigma) ), % ):
+fs( % ):
+collect( %, [sinXi,sin(mu),cos(mu)] );
+ynum := %;
+
+# then the denominator
+denom( tmp[1] ):
+collect( %, [sin(Nu),cos(Nu),sin(Tau),cos(Tau),sin(theta),cos(theta),sin(sigma),cos(sigma),sin(alpha),cos(alpha)] );
+
+# wow - quite odd
+denom_byhand := - cos(Tau)*cos(Xi[gn]) + sin(Tau)*sin(Xi[gn])*( cos(mu[gn]-Nu) );
+
+# create check
+goGnomon := proc( func )
+    func:
+    subs(tau = 0,%):
+    subs(tmt = theta,%):
+    eval(%):
+    fs(%):
+end:
+cosXi_gn := goGnomon( cosXi_subs ):
+cosHA_gn := subs( sinXi = sin(Xi[gn]), goGnomon( cosHA ) ):
+sinHA_gn := subs( sinXi = sin(Xi[gn]), goGnomon( sinHA ) ):
+subsDenom := proc( func )
+    func:
+    subs( cos(mu[gn]) = cosHA_gn, sin(mu[gn]) = sinHA_gn, % ):
+    subs( cos(Xi[gn]) = cosXi_gn, % ):
+    fs(%);
+end:
+
+# apply check
+denom( tmp[1] ) - denom_byhand:
+expand( % ):
+subsDenom( % );
+
+# make sure denominator is same for both x and y components
+denom( tmp[1] ) - denom( tmp[2] );
+
+# OK, so the whole thing can be written as
+shadNice := 1/D * (xnum*m[1] + ynum*m[2]);
+
+# where the denominator is
+denom_byhand:
+expand(%):
+subsDenom( % ):
+D_subs := %;
+
+# check
+denom( tmp[1] ) - D_subs:
+fs(%);
+
+# check
+vpm( shadNice ) - vpm( shad2 ):
+subs( lambda = lambda_subs, % ):
+subs( D = D_subs, %):
+fs(%):
+subs( sin(mu) = sinHA, cos(mu) = cosHA, % ):
+goTmt(%);
+
+# seems to work. Let's tody up D for paper
+D_subs:
+collect( %, [sin(Nu),cos(Nu),sin(Tau),cos(Tau),sin(theta),cos(theta),sin(sigma),cos(sigma),sin(alpha),cos(alpha)] ):
+goPaper(%);
+
+# so by hand gives
+D_byhand := sin(Tau)*(sin(Nu)*sin(Xi[s])*sin(mu[s]) + cos(Nu)*(cos(theta)*sin(Xi[s])*cos(mu[s]) - sin(theta)*cos(Xi[s]) )) - cos(Tau)*(cos(theta)*cos(Xi[s]) + sin(theta)*sin(Xi[s])*cos(mu[s]));
+
+# check
+goStyle := proc( func )
+    func:
+    subs(tau = theta,%):
+    subs(tmt = 0,%):
+    eval(%):
+    fs(%):
+end:
+
+D_subs - D_byhand:
+subs( sin(mu[s]) = goStyle( sinHA ), %):
+subs( cos(mu[s]) = goStyle( cosHA ), %):
+subs( sin(Xi[s]) = sinXi, cos(Xi[s]) = goStyle( cosXi_subs ), %):
+fs(%);
+
+# How about in the limit of a gnomon with horizonal dial?
+goGnomonBetter := proc( func )
+    func:
+    subs(tau = 0,%):
+    subs(tmt = theta,%):
+    subs( cos(mu[gn]) = cosHA_gn, sin(mu[gn]) = sinHA_gn, % ):
+    subs( cos(Xi[gn]) = cosXi_gn, % ):
+    subs( sin( mu ) = sin( mu[gn] ), cos( mu ) = cos( mu[gn] ), % ):
+    eval(%):
+    fs(%):
+end:
+
+goHor:= proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Nu = 0, Tau = 0, %):
+    eval(%):
+    fs(%);
+end:
+
+# so shadow vector becomes
+vpm( shadNice ):
+goGnomonBetter( % ):
+goHor(%);
+
+# can see that the length of this vector is sin(Xi) / D
+denom_byhand:
+goHor(%);
+
+# so we have -tan( Xi ) as we expect.
+
+# could try taking inner product with rst to get magnitude. First check that they are parallel via outer product
+rst &^ shadNice:
+bpn(%):
+subs( sin(beta) = sinbeta, cos(beta) = cosbeta, % ):
+fs(%);
+
+# fine, rather that do inner product, have seen that we can just do this
+vpm( L*rst - shadNice );
+subs( sin(beta) = sinbeta, cos(beta) = cosbeta, % ):
+tmp := fs(%);
+sl := solve( tmp[1], L );
+
+# check
+subs( L = sl, tmp[2] );
+
+# Should be able to reproduce this with noon line. noonShad is unit length so this should be shad length * cos(zeta)
+noonShad &. shadNice:
+tmpip := fs(%);
+
+# so this should be the length of the shadow
+tmpcz := fs( subs( sin(beta) = sinbeta, cos(beta) = cosbeta, coszeta ) );tmpip / tmpcz:
+fs(%);
+
+# gives zero. So sl = X sin(Xi) / D
+
+# another check against shadNice
+shadNice &. shadNice:
+fs(%):
+% - sl^2:
+subs( X = X_subs, %):
+se(%);
+
+# Look at analemmatic limit of equation of shadow tip.
+goAn := proc( func )
+    func:
+    subs( sinXi = -D, %):
+    subs( X = 1, %):
+    goHor(%):
+    goGnomonBetter(%):
+end:
+
+vpm( rst ):
+subs( sin(beta) = sinbeta, cos(beta) = cosbeta, % ):
+fs(%):
+goAn(%);
+
+# note that this is in terms of hour angle as defined relative to a style, not the gnomon. zeta is mu, confirmed by goAn( tanzeta ). How about beta?
+goAn( tanbeta );
+
+# divide by zero. Try beta from scratch
+goAn( R_shadow ) &@ n[3] &@ reverse( goAn( R_shadow ) ):
+tmp := combine_beta(%):
+
+# the above is very huge but the following is nice and small
+vpn(tmp);
+
+# know that shadow is [cos(mu),sin(mu)] so beta must be pi/2. Of course, beta is the angle between the gnomon and the ground plane in the solar plane so must be pi/2.
+
+# I think I can get a nice relation for the gnomon - sun ray - shadow triangle. We have
+sinXi / sl - sin( Xi - beta ) / 1:
+expand(%):
+subs( sin(beta) = sinbeta, cos(beta) = cosbeta, % ):
+fs(%):
+subs( D = D_subs, % ):
+subs( sinXi = sin(Xi), % ):
+subs( sin(mu) = sinHA, cos(mu) = cosHA, %):
+fs(%):
+goTmt(%):
+subs( sinXi = sin(Xi), % ):
+fs(%):
+
+# solve for cos(Xi)
+tmp_cosXi := solve( %, cos(Xi) );
+
+# check
+tmp_cosXi + cosXi_subs:
+fs(%);
+
+# so there is a sign difference to sort out.
+
+# have a look at the equatorial dial because at least understand that one
+# equatorial
+goEqu := proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Tau = theta, Nu = 0, %):
+    subs( tau = theta, tmt = 0, % ):
+    eval(%):
+    fs(%);
+end:
+
+# should get 1/tan(alpha) for sl and we do (with a sigma there too).
+
+# ----------------------------------------------------------------- #
+# Compare with Rohr
+# ----------------------------------------------------------------- #
+
+# Now compare with Rohr. Try to figure out what he means by declination of the dial. Calculate V, the angle between the noon line and the line of greatest slope of the dial
+
+# line of greatest slope is m[1]. cosine of V, angle between noonShad and it is
+noonShad &. m[1]:
+fs(%);
+
+# and sine is
+noonShad &. m[2]:
+fs(%);
+
+# so Tau is i and Nu is d give or take a sign. So how about W (angle between shadow and line of greatest slope, ie m[1])? cosine first
+shad_better &. m[1]:
+fs(%);
+
+# looks good, now sine
+shad_better &. m[2]:
+fs(%);
+
+# manipulate into the right form to compare
+shad_better &. m[2] / shad_better &. m[1]:
+fs(%):
+subs( tau = theta, sin(mu) = tanmu*cos(mu),% ):
+fs(%):
+tmp := subs( Tau = i, Nu = d, tanmu = tan(HA),%);
+
+# check (NB tan(w) from page 78)
+tan_w_rohr := ( cos(i)*cos(d)*sin(phi) + sin(i)*cos(phi) - cos(i)*sin(d)/tan(HA) ) / (cos(d)/tan(HA) + sin(d)*sin(phi));
+tmp - %:
+subs( phi = Pi/2 - theta, %):
+eval(%):
+fs(%);
+
+# fine. Now go after substyle. Project shad stick straight onto ground plane and rotate by pi/2 in the plane
+tmpRot := cos( gamma/2 ) - GP*sin( gamma / 2 );
+tmpRot &@ (st &. GP) &@ reverse( tmpRot ):
+fs(%):
+combine(%,trig):
+se(%):
+eval( subs(gamma = Pi/2,%) ):
+fs(%):
+tmp := %:
+
+# length of this is cos( angle between style and substyle )
+tmp &. tmp:
+fs(%);
+
+# compare with Rohr
+se( 1 - (cos(tau)*cos(Tau) + sin(tau)*sin(Tau)*cos(Nu))^2 ) - %;
+
+# so have the substyle if normalise
+subStyle := tmp / cos(A);
+sinA := cos(tau)*cos(Tau) + sin(tau)*sin(Tau)*cos(Nu);
+
+# check (NB sinA is sin(alpha), Equation 7 page 78 Rohr)
+subStyle &. subStyle:
+fs(%):
+subs( cos(A) = sqrt(1 - sinA^2), %):
+fs(%);
+
+# fine. And finally, go for angle between substyle and noonline. Cosine is
+subStyle &. noonShad:
+fs(%):
+cosB := %;
+
+# and for sine, easiest to put in a rotor
+subStyle &. ( tmpRot &@ noonShad &@ reverse( tmpRot ) ):
+fs(%):
+combine(%,trig):
+se(%):
+eval( subs(gamma = -Pi/2,%) ):
+fs(%):
+sinB := %;
+
+# so tangent is
+sinB / cosB:
+eval( subs( Tau = i, Nu = d, tau = Pi/2-phi,%) ):
+#goPaper( % ):
+subs( sin(i) = sinI, %):
+subs( cos(i)^2 = 1 - sinI^2, %):
+fs(%):
+subs( sinI = sin(i), %):
+subs(sin(phi) = tanphi*cos(phi), %):
+fs(%);
+
+# great! This matches tan(beta) at bottom of page 78, second column. 
+
+# ----------------------------------------------------------------- #
+# Sunrise and sunset
+# ----------------------------------------------------------------- #
+
+# invesigate sunset and sunrise. For a horizontal dial, get sunrise/set when D = 0
+D_subs:
+goHor(%);
+
+# some work by hand gives a quadratic equation for sin(psi) whose descriminant can be set to zero and solved for theta to get
+tantheta_crit := sin(alpha) / sqrt(tan(sigma)^2 + cos(alpha)^2);
+
+# how about the same thing for arbitrary dial orientation?
+D_subs:
+goPaper(%):
+collect( %, [sin(psi),cos(psi)] );
+tmp := %:
+
+# this is of the form
+eqn1 := t1*sin(psi) + t2*cos(psi) + t3;
+
+# where
+t1_subs := cos(theta)*sin(i)*cos(d)*sin(sigma)-sin(theta)*cos(i)*sin(sigma)-cos(alpha)*sin(d)*sin(i)*cos(sigma);
+
+t2_subs := -sin(theta)*cos(i)*cos(alpha)*cos(sigma)+sin(d)*sin(i)*sin(sigma)+cos(alpha)*cos(theta)*sin(i)*cos(d)*cos(sigma);
+
+t3_subs := sin(alpha)*sin(theta)*sin(i)*cos(d)*cos(sigma)+cos(i)*cos(theta)*sin(alpha)*cos(sigma);
+
+# check
+goPaper( D_subs) - eqn1;
+subs( t1 = t1_subs, t2 = t2_subs, t3 = t3_subs, % ):
+fs(%);
+
+# so we can get a quadratic in sin(psi)
+eqn2 := (t1^2 + t2^2)*sin(psi)^2 + 2*t1*t3*sin(psi) + t3^2-t2^2;
+
+# and the discriminant (times 1/4) is
+tmp_disc := (t1^2*t2^2 - (t1^2 + t2^2)*(t3^2-t2^2));
+
+# so
+fs( tmp_disc ):
+subs( t1 = t1_subs, t2 = t2_subs, t3 = t3_subs, % ):
+fs(%);
+
+# not very neat!
+
+# ----------------------------------------------------------------- #
+# Common dial types
+# ----------------------------------------------------------------- #
+
+# define some special cases. First for shadow stick
+goStyle := proc( func )
+    func:
+    subs(tau = theta,%):
+    subs(tmt = 0,%):
+    eval(%):
+    fs(%):
+end:
+
+goGnomon := proc( func )
+    func:
+    subs(tau = 0,%):
+    subs(tmt = theta,%):
+    eval(%):
+    fs(%):
+end:
+
+# and the for dial plane
+goHor:= proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Nu = 0, Tau = 0, %):
+    eval(%):
+    fs(%);
+end:
+
+# and the for dial plane
+goVer:= proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Nu = 0, Tau = Pi/2, %):
+    eval(%):
+    fs(%);
+end:
+
+# inclining
+goInc := proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Nu = 0, %):
+    eval(%):
+    fs(%);
+end:
+
+# declining
+goDec := proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Tau = Pi/2, %):
+    eval(%):
+    fs(%);
+end:
+
+# equatorial
+goEqu := proc( func )
+    func:
+    subs( DD(Tau,Nu) = DD_subs, % ):
+    subs( Tau = theta, Nu = 0, %):
+    subs( tau = theta, tmt = 0, % ):
+    eval(%):
+    fs(%);
+end:
+
+# equatorial first
+tanzeta:
+goEqu(%);
+
+sl_subs := subs( D = D_subs, X = X_subs, sinXi = sqrt(1-cosXi_subs^2), sl ):
+goEqu(%);
+
+# this is independent of latitude as expect. What about the limit of small alpha? We get 1/sin(alpha), infinite shadow length, OK.
+
+# go straight to the analemmatic case and try to understand
+goAn := proc( func )
+    func:
+    subs( sinXi = sin(Xi[a]), %):
+    subs( D = -cos(Xi[a]), %):
+    subs( X = 1, %):
+    goHor(%):
+    goGnomon(%):
+end:
+
+# zeta is just mu
+goAn( tanzeta );
+
+# shadow tip turns out to lie on a circle!? No! The radius is a function of time. 
+goAn( vpm( shadNice ) );
+
+# when tan(theta) is less than this, there is a sunset/rise. Seems to have the right sort of properties, eg theta_crit = alpha at solstaces and theta_crit = 0 at equinoxes.
+
+# might be useful to get declination
+(f[1]&^f[2]) &. ss:
+fs(%):% &. %:
+fs(%);
+
+# can see that we have
+cosdec := sqrt(sin(sigma)^2 + cos(sigma)^2*cos(alpha)^2);
+sindec := cos(sigma)*sin(alpha);
+
+# let's show that shadow bearing is indeed as given in Equation (5) on page 104 of Rohr. 
+sindec/cosdec*sin(theta) / goStyle( sinHA ) - cos(theta) / goStyle( tanHA ):
+subs( sinXi = -sqrt(1-goStyle(cosXi_subs)^2), %):
+tmp := fs(%):
+
+# this should be goAn( 1/tanzeta ) which is 1/tan(mu)
+goAn( 1/tanHA ) + %:
+fs(%);
+
+# fine.
+
+# a horizontal dial
+tanzeta:
+goHor( % );
+
+sl_subs:
+goHor( % );
+
+# then a vertical dial
+tanzeta:
+goVer( % );
+
+sl_subs:
+goVer( % );
+
+# dial which both inclines and declines
+tanzeta:
+goStyle( % );
+
+# just substitute tau = theta...
+
+# inclining dial
+tanzeta:
+goStyle( % ):
+goInc( % ):
+subs( sin(mu) = tan_mu * cos_mu, % ):
+combine(%,trig):
+subs( cos_mu = cos(mu), % ):
+subs( tan_mu = tan(mu), %);
+
+vpm( shadNice ):
+goStyle( % ):
+goInc( % ):
+
+# declining dial
+tanzeta:
+goStyle( % ):
+goDec( % );
+
+tanbeta:
+goStyle( % ):
+goDec( % );
+
+
+
+
+
+
+
+
+
+
+
+# To do:
+
+- Relate to de Vries rotation formulae
+
+- references
+
+????
+
+
+
+
+
+
+
+
+# what is the magnitude of the bivector perp to two others? cos(angle between)?
+e[1,2] &. ( e[1] &^ (cos(theta)*e[2] + sin(theta)*e[3]) );
+
+# almost: it is -cos(angle between, as defined above).
+
+
+
+
+

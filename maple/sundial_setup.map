@@ -1,0 +1,230 @@
+
+# ----------------------------------------------------------------- #
+# Initial set up of basic quantities
+# ----------------------------------------------------------------- #
+
+# Earth tilt rotor
+R_alpha := cos(alpha/2) - e[1,3]*sin(alpha/2):
+
+# Earth spin rotor
+R_alpha &@ e[1] &@ reverse(R_alpha):
+combine(%,trig):
+e1p := %:
+R_psi := cos(psi/2) - e1p&@e[2]*sin(psi/2):
+
+# Earth frame vector 1
+R_psi &@ R_alpha &@ e[1] &@ reverse(R_alpha) &@ reverse(R_psi):
+combine(%,trig):
+cc(%):
+collect(%,cos(psi)):
+f[1] := %:
+
+# Earth frame vector 2
+R_psi &@ e[2] &@ reverse(R_psi):
+combine(%,trig):
+se(%):
+collect(%,sin(psi)):
+f[2] := %:
+
+# Earth frame vector 3
+R_alpha &@ e[3] &@ reverse(R_alpha):
+combine(%,trig):
+f[3] := %:
+
+# check orthonormal
+f[1] &@ f[2] &@ f[3]:
+se(%):
+
+# latitude rotor
+f[3]&@f[1]:
+se(%):
+collect(%,sin(psi)):
+cos(theta/2) - %*sin(theta/2):
+R_theta := %:
+
+# surface frame vector 1
+R_theta &@ f[1] &@ reverse(R_theta):
+combine(%,trig):
+se(%):
+cc(%):
+n[1] := %:
+
+# surface frame vector 2
+n[2] := f[2]:
+
+# surface frame vector 3
+R_theta &@ f[3] &@ reverse(R_theta):
+combine(%,trig):
+se(%):
+cc(%):
+n[3] := %:
+
+# check orthonormal
+n[1] &@ n[2] &@ n[3]:
+se(%):
+
+# define a projection function
+vpn := proc(vecin)
+
+	local vec,result,tmp,i,ii;
+
+    vec := project(expand(vecin),1):
+	result:=[seq(0,ii=1..3)];
+    
+    i:=1;
+	tmp:=fs(project(n[1]&@vec,0));
+	result:=subsop(i=tmp,result);
+    i:=2;
+	tmp:=fs(project(n[2]&@vec,0));
+	result:=subsop(i=tmp,result);
+    i:=3;
+    tmp:=fs(project(n[3]&@vec,0));
+	result:=subsop(i=tmp,result);
+    
+end:
+
+# check
+aa*n[1]+bb*n[2]+cc*n[3]:
+vpn(%):
+
+# also define one for bivectors
+# define a projection function
+bpn := proc(bivin)
+
+	local biv,result,tmp,i,ii;
+
+    biv := project(expand(bivin),2):
+	result:=[seq(0,ii=1..3)];
+    
+    i:=1;
+	tmp:=fs(project(n[2]&@n[1]&@biv,0));
+	result:=subsop(i=tmp,result);
+    i:=2;
+	tmp:=fs(project(n[3]&@n[2]&@biv,0));
+	result:=subsop(i=tmp,result);
+    i:=3;
+    tmp:=fs(project(n[1]&@n[3]&@biv,0));
+	result:=subsop(i=tmp,result);
+    
+end:
+
+# check
+aa*n[1]&@n[2]+bb*n[2]&@n[3]+cc*n[3]&@n[1]:
+bpn(%):
+
+# Earth orbit rotor and vector
+R_sigma := cos(sigma/2) - e[1,2]*sin(sigma/2):
+R_sigma &@ e[1] &@ reverse(R_sigma):
+combine(%,trig):
+ss := %;
+
+# am now set up with the n frame, the f frame and the sun shine vector.
+
+# ----------------------------------------------------------------- #
+# Create arbitrary shadow stick and plane
+# ----------------------------------------------------------------- #
+
+# define rotors for arbitrary shadow stick
+cos(tau/2) - (-n[3]&@n[1])*sin(tau/2):
+fs(%):
+R_tau := %:
+
+# check
+R_tau &@ f[3] &@ reverse( R_tau ):
+fs(%):
+combine(%,trig):
+se(%):
+subs(tau = Pi/2 - theta, %):
+se( % + n[1] ):
+
+# and
+cos(nu/2) - (n[1]&@n[2])*sin(nu/2):
+fs(%):
+R_nu := %:
+
+# check
+R_nu &@ n[1] &@ reverse( R_nu ):
+fs(%):
+combine(%,trig):
+se(%):
+subs(nu = Pi/2, %):
+eval(%):
+fs( % - n[2] ):
+
+# create shadow stick
+
+# first need a function
+combineStickAngles:=proc(func)
+    func;
+    subs(sin(psi) = sinpsi, cos(psi) = cospsi, %):
+    subs(sin(alpha) = sinalpha, cos(alpha) = cosalpha, %):
+    subs(sin(sigma) = sinsigma, cos(sigma) = cossigma, %): 
+    subs(sin(nu) = sinnu, cos(nu) = cosnu, %):
+    subs(sin(Nu) = sinNu, cos(Nu) = cosNu, %):  
+    combine(%,trig):
+    fs(%);
+    subs(sinpsi = sin(psi), cospsi = cos(psi), %):
+    subs(sinalpha = sin(alpha), cosalpha = cos(alpha), %):
+    subs(sinsigma = sin(sigma), cossigma = cos(sigma), %):
+    subs(sinnu = sin(nu), cosnu = cos(nu), %):
+    subs(sinNu = sin(Nu), cosNu = cos(Nu), %):
+end:
+
+# then get vector
+R_tau &@ n[3] &@ reverse( R_tau ):
+fs(%):
+combineStickAngles(%):
+R_nu &@ % &@ reverse( R_nu ):
+fs(%):
+combineStickAngles(%):
+se(%):
+cc(%):
+st := %: # shadow stick
+
+# have a look
+'st' = vpn(st);
+
+# get shadow plane
+1/sinXi*project(ss&@st,2):
+SP := fs(%): # solar plane
+
+# have a look
+'SP' = bpn( SP );
+
+# get Xi
+project( ss &@ st, 0 ):
+cosXi_subs := %;
+
+# check
+SP &@ SP + 1:
+numer(%):
+fs(%):
+subs( sinXi = sqrt(1-cosXi_subs^2) ,% ):
+fs(%);
+
+# try for sinXi
+#tmp := (cos(sigma)*sin(psi)*cos(alpha)+sin(sigma)*cos(psi))*cos(tmt)+cos(sigma)*sin(alpha)*sin(tmt):
+#fs( tmp^2 + cosXi_subs^2 - 1 );
+
+# now to get the arbitrary ground plane. Need two rotors
+cos(Tau/2) - (-n[3]&@n[1])*sin(Tau/2):
+fs(%):
+R_Tau := %:
+
+cos(Nu/2) - (n[1]&@n[2])*sin(Nu/2):
+fs(%):
+R_Nu := %:
+
+# get inclined ground
+n[1] &@ n[2]:
+R_Tau &@ % &@ reverse( R_Tau ):
+fs(%):
+combineStickAngles(%):
+R_Nu &@ % &@ reverse( R_Nu ):
+fs(%):
+combineStickAngles(%):
+se(%):
+GP := %:
+
+# have a look
+'GP' = bpn(GP);
