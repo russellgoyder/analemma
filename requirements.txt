@@ -1,0 +1,4 @@
+galgebra>=0.5
+ipython>=8.11
+sympy>=1.11
+jupyter>=1.0
