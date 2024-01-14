@@ -1,3 +1,5 @@
+name: build-and-publish-using-jupyter-to-pages
+
 on:
   workflow_dispatch:
   push:
