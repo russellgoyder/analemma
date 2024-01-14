@@ -2,3 +2,5 @@ galgebra>=0.5
 ipython>=8.11
 sympy>=1.11
 jupyter>=1.0
+mkdocs>=1.5
+mkdocs-material>=9.5
