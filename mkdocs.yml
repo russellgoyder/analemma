@@ -1,6 +1,8 @@
 site_name: The Sundial Problem from a New Angle
 theme:
   name: material
+  palette:
+    scheme: slate
 
 markdown_extensions:
   - pymdownx.arithmatex:
