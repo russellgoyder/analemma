@@ -11,9 +11,12 @@ However, environments such as equation and align require math mode, which this s
 hacks into place within the ipynb file before converting to markdown.
 """
 
-import json
+import json, sys
 
-with open("sundial.ipynb", mode= "r", encoding= "utf-8") as f:
+if len(sys.argv) < 3:
+    raise Exception("Usage: python dollar_dollar.py in.ipynb out.ipunb")
+
+with open(sys.argv[1], mode= "r", encoding= "utf-8") as f:
     doc = json.loads(f.read())
 
 for cell in doc["cells"]:
@@ -26,5 +29,5 @@ for cell in doc["cells"]:
                         latex_lines[0] = "$" + latex_lines[0]
                         latex_lines[-1] = latex_lines[-1] + "$"
 
-with open("sundial_dollar_dollar.ipynb", mode= "w") as f:
+with open(sys.argv[2], mode= "w") as f:
     f.write(json.dumps(doc))
