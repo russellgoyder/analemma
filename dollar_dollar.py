@@ -14,7 +14,7 @@ hacks into place within the ipynb file before converting to markdown.
 import json, sys
 
 if len(sys.argv) < 3:
-    raise Exception("Usage: python dollar_dollar.py in.ipynb out.ipunb")
+    raise Exception("Usage: python dollar_dollar.py in.ipynb out.ipynb")
 
 with open(sys.argv[1], mode= "r", encoding= "utf-8") as f:
     doc = json.loads(f.read())
