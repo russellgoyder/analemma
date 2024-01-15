@@ -546,7 +546,7 @@
 
 <span class="c1"># Multivector mv on its own in a cell appears fine in the notebook but when nbconverted</span>
 <span class="c1"># to Markdown comes out as \begin{equation*} x \end{equation*} instead of eg $\displaystyle x$</span>
-<span class="c1"># and consequently isn&#39;t rendered in HTML after running jupyter-book.</span>
+<span class="c1"># and consequently isn&#39;t rendered in HTML after running mkdocs.</span>
 <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">mv</span><span class="p">):</span>
     <span class="k">return</span><span class="p">(</span><span class="n">Math</span><span class="p">(</span><span class="n">latex</span><span class="p">(</span><span class="n">mv</span><span class="p">)))</span>
 </code></pre></div>
