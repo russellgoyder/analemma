@@ -860,9 +860,9 @@
 </code></pre></div>
 <div class="arithmatex">\[\displaystyle  0 \]</div>
 <h3 id="the-hour-angle">The Hour Angle</h3>
-<p>Define a generalized solar hour angle <span class="arithmatex">\(\mu\)</span> as the angle between <span class="arithmatex">\(S\)</span> and <span class="arithmatex">\(M\)</span>, given by
-<span class="arithmatex">\(<span class="arithmatex">\(\cos(\mu) = \frac{-S\cdot M}{\sqrt{-S^2}\sqrt{-M^2}} = \frac{-S\cdot M}{\sin(\Xi)}\)</span>\)</span>
-given that <span class="arithmatex">\(M^2=-1\)</span></p>
+<p>Define a generalized solar hour angle <span class="arithmatex">\(\mu\)</span> as the angle between <span class="arithmatex">\(S\)</span> and <span class="arithmatex">\(M\)</span>, given by</p>
+<div class="arithmatex">\[\cos(\mu) = \frac{-S\cdot M}{\sqrt{-S^2}\sqrt{-M^2}} = \frac{-S\cdot M}{\sin(\Xi)}\]</div>
+<p>given that <span class="arithmatex">\(M^2=-1\)</span></p>
 <div class="highlight"><pre><span></span><code><span class="n">sinXi_cos_mu</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">S</span><span class="o">|</span><span class="n">M</span><span class="p">)</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
 
 <span class="n">print_eq</span><span class="p">(</span> <span class="sa">r</span><span class="s2">&quot;\sin(\Xi) \cos(\mu)&quot;</span><span class="p">,</span> <span class="n">sinXi_cos_mu</span> <span class="p">)</span>
@@ -961,10 +961,10 @@ given that <span class="arithmatex">\(M^2=-1\)</span></p>
             \end{align}
             \]</div>
 <p>Want to normalize <span class="arithmatex">\(u\)</span> to get <span class="arithmatex">\(\hat{u} \equiv \hat{w}\)</span>, a unit vector parallel to the shadow <span class="arithmatex">\(w\)</span>. Can square and add the above components, but there is a route to a simpler expression as follows.</p>
-<p>The cosine of the angle between the "shadow plane" <span class="arithmatex">\(S\)</span> (containing the sun ray <span class="arithmatex">\(s\)</span> and the gnomon <span class="arithmatex">\(g\)</span>) and dial face <span class="arithmatex">\(G\)</span> is given by
-<span class="arithmatex">\(<span class="arithmatex">\(\cos(\Psi) = \frac{S\cdot G}{\sqrt{-S^2}\sqrt{-G^2}}\)</span>\)</span>
-Given that <span class="arithmatex">\(S^2 = -\sin^2(\Xi)\)</span> and <span class="arithmatex">\(G^2 = -1\)</span>,
-$$ \cos(\Psi) = \frac{S\cdot G}{\sin(\Xi)}$$</p>
+<p>The cosine of the angle between the "shadow plane" <span class="arithmatex">\(S\)</span> (containing the sun ray <span class="arithmatex">\(s\)</span> and the gnomon <span class="arithmatex">\(g\)</span>) and dial face <span class="arithmatex">\(G\)</span> is given by</p>
+<div class="arithmatex">\[\cos(\Psi) = \frac{S\cdot G}{\sqrt{-S^2}\sqrt{-G^2}}\]</div>
+<p>Given that <span class="arithmatex">\(S^2 = -\sin^2(\Xi)\)</span> and <span class="arithmatex">\(G^2 = -1\)</span>,</p>
+<div class="arithmatex">\[ \cos(\Psi) = \frac{S\cdot G}{\sin(\Xi)}\]</div>
 <div class="highlight"><pre><span></span><code><span class="n">cosPsi</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(((</span><span class="n">Su</span><span class="o">|</span><span class="n">Gu</span><span class="p">)</span><span class="o">/</span><span class="n">sin</span><span class="p">(</span><span class="n">Xi</span><span class="p">))</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
 <span class="n">print_eq</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\cos(\Psi)&quot;</span><span class="p">,</span> <span class="n">cosPsi</span><span class="p">)</span>
 </code></pre></div>
@@ -982,12 +982,12 @@ $$ \cos(\Psi) = \frac{S\cdot G}{\sin(\Xi)}$$</p>
 <span class="n">display</span><span class="p">(</span> <span class="n">SuGu_check</span> <span class="p">)</span>
 </code></pre></div>
 <div class="arithmatex">\[\displaystyle  0 \]</div>
-<p>Now, the length of <span class="arithmatex">\(u\)</span> is related to <span class="arithmatex">\(\Psi\)</span> as follows.
-<span class="arithmatex">\(<span class="arithmatex">\(u^2 = (I\; G \times S)^2 = (\frac{I}{2}(GS-SG))^2 = -\frac{1}{4}(GSGS+SGSG-2S^2G^2)\)</span>\)</span>
-But
-<span class="arithmatex">\(<span class="arithmatex">\((S\cdot G)^2 = \frac{1}{4}(SG+GS)^2 = \frac{1}{4}(SGSG+GSGS+2S^2G^2)\)</span>\)</span>
-So,
-<span class="arithmatex">\(<span class="arithmatex">\(u^2 = S^2G^2 - (S\cdot G)^2 = \sin^2(\Xi) - (S\cdot G)^2 = \sin^2(\Xi)\sin^2(\Psi)\)</span>\)</span></p>
+<p>Now, the length of <span class="arithmatex">\(u\)</span> is related to <span class="arithmatex">\(\Psi\)</span> as follows.</p>
+<div class="arithmatex">\[u^2 = (I\; G \times S)^2 = (\frac{I}{2}(GS-SG))^2 = -\frac{1}{4}(GSGS+SGSG-2S^2G^2)\]</div>
+<p>But</p>
+<div class="arithmatex">\[(S\cdot G)^2 = \frac{1}{4}(SG+GS)^2 = \frac{1}{4}(SGSG+GSGS+2S^2G^2)\]</div>
+<p>So,</p>
+<div class="arithmatex">\[u^2 = S^2G^2 - (S\cdot G)^2 = \sin^2(\Xi) - (S\cdot G)^2 = \sin^2(\Xi)\sin^2(\Psi)\]</div>
 <div class="highlight"><pre><span></span><code><span class="c1"># check</span>
 <span class="n">u2_check</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span><span class="o">|</span><span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">Su</span><span class="o">|</span><span class="n">Gu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">u2_check</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1007,10 +1007,10 @@ So,
             &amp; + \frac{\left(- \sin{\left (d \right )} \sin{\left (\mu  \right )} \cos{\left (\iota  \right )} + \cos{\left (d \right )} \cos{\left (\mu  \right )}\right) \sin{\left (i \right )}}{\sin{\left (\Psi \right )}} u_3 \nonumber
             \end{align}
             \]</div>
-<p>Check that
-<span class="arithmatex">\(<span class="arithmatex">\(\hat{w}^2 = \left(\frac{u}{\sin(\Xi)\sin(\Psi)}\right)^2 = 1\)</span>\)</span>
-by showing that
-<span class="arithmatex">\(<span class="arithmatex">\(\frac{u^2}{\sin^2(\Xi)} - \sin^2\Psi = 0\)</span>\)</span></p>
+<p>Check that</p>
+<div class="arithmatex">\[\hat{w}^2 = \left(\frac{u}{\sin(\Xi)\sin(\Psi)}\right)^2 = 1\]</div>
+<p>by showing that</p>
+<div class="arithmatex">\[\frac{u^2}{\sin^2(\Xi)} - \sin^2\Psi = 0\]</div>
 <div class="highlight"><pre><span></span><code><span class="n">sinPsiSquared</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">cosPsi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">u_over_sinXi_squared</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(((</span><span class="n">u</span><span class="o">|</span><span class="n">u</span><span class="p">)</span><span class="o">/</span><span class="n">sin</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
 <span class="n">what_check</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(</span><span class="n">u_over_sinXi_squared</span> <span class="o">-</span> <span class="n">sinPsiSquared</span><span class="p">)</span>
@@ -1072,7 +1072,17 @@ by showing that
 <div class="highlight"><pre><span></span><code><span class="n">p_soln</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">obj</span><span class="p">),</span> <span class="n">p</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">display</span><span class="p">(</span> <span class="n">p_soln</span> <span class="p">)</span>
 </code></pre></div>
-<div class="arithmatex">\[\displaystyle \frac{\sin{\left (i \right )} \sin{\left (\iota  \right )} \cos{\left (d \right )} + \cos{\left (i \right )} \cos{\left (\iota  \right )}}{\sin{\left (\alpha  \right )} \sin{\left (i \right )} \sin{\left (\theta  \right )} \cos{\left (d \right )} \cos{\left (\sigma  \right )} + \sin{\left (\alpha  \right )} \cos{\left (i \right )} \cos{\left (\sigma  \right )} \cos{\left (\theta  \right )} - \sin{\left (d \right )} \sin{\left (i \right )} \sin{\left (\psi  \right )} \cos{\left (\alpha  \right )} \cos{\left (\sigma  \right )} + \sin{\left (d \right )} \sin{\left (i \right )} \sin{\left (\sigma  \right )} \cos{\left (\psi  \right )} + \sin{\left (i \right )} \sin{\left (\psi  \right )} \sin{\left (\sigma  \right )} \cos{\left (d \right )} \cos{\left (\theta  \right )} + \sin{\left (i \right )} \cos{\left (\alpha  \right )} \cos{\left (d \right )} \cos{\left (\psi  \right )} \cos{\left (\sigma  \right )} \cos{\left (\theta  \right )} - \sin{\left (\psi  \right )} \sin{\left (\sigma  \right )} \sin{\left (\theta  \right )} \cos{\left (i \right )} - \sin{\left (\theta  \right )} \cos{\left (\alpha  \right )} \cos{\left (i \right )} \cos{\left (\psi  \right )} \cos{\left (\sigma  \right )}}\]</div>
+<div class="highlight"><pre><span></span><code>---------------------------------------------------------------------------
+
+AttributeError                            Traceback (most recent call last)
+
+Cell In[53], line 1
+----&gt; 1 p_soln = sp.solve(sp.trigsimp(_.obj), p)[0]
+      2 display( p_soln )
+
+
+AttributeError: &#39;Math&#39; object has no attribute &#39;obj&#39;
+</code></pre></div>
 <p>We can write this is in terms of the hour angle <span class="arithmatex">\(\mu\)</span> evaluated under the condition <span class="arithmatex">\(\iota = \theta\)</span> and denoted <span class="arithmatex">\(\mu_s\)</span>. This is true when the gnomon is parallel to the earth's axis, and termed a style, hence the subscript <span class="arithmatex">\(s\)</span>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">mu_s</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\mu_s&quot;</span><span class="p">)</span>
 <span class="n">D_soln</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">sin</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">mu_s</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">mu_s</span><span class="p">))</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span><span class="o">*</span><span class="p">(</span> <span class="n">sin</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="p">)</span>
@@ -1085,15 +1095,15 @@ by showing that
 <span class="n">display</span><span class="p">(</span> <span class="n">D_check</span> <span class="p">)</span>
 </code></pre></div>
 <div class="arithmatex">\[\displaystyle 0\]</div>
-<p>So given <span class="arithmatex">\(p\)</span>, we have <span class="arithmatex">\(w = g + ps\)</span>. However, it is a little cumbersome to work with and we can get <span class="arithmatex">\(w\)</span> in terms of <span class="arithmatex">\(g\)</span>-<span class="arithmatex">\(ps\)</span>-<span class="arithmatex">\(w\)</span> triangle directly by projecting <span class="arithmatex">\(w\)</span> onto <span class="arithmatex">\(s\)</span> and <span class="arithmatex">\(g\)</span> to give two equations we can solve for <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(L\)</span>, the length of <span class="arithmatex">\(w\)</span>. We have
-<span class="arithmatex">\(<span class="arithmatex">\(s\cdot w = L\cos(\Xi-\beta) = s\cdot g + p\, s\cdot s = \cos(\Xi) + p\)</span>\)</span>
-and
-<span class="arithmatex">\(<span class="arithmatex">\(g\cdot w = L\cos(\beta) = g\cdot g + p g\cdot s = 1 + p\, \cos(\Xi)\)</span>\)</span>
-This yields two simultaneous equations for <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(L\)</span>, with solutions
-<span class="arithmatex">\(<span class="arithmatex">\(p = \frac{\sin(\beta)}{\sin(\Xi-\beta)}\)</span>\)</span>
-and
-<span class="arithmatex">\(<span class="arithmatex">\(L = \frac{\sin(\Xi)}{\sin(\Xi-\beta)}\)</span>\)</span>
-First define <span class="arithmatex">\(w\)</span> on the <span class="arithmatex">\(n\)</span> basis</p>
+<p>So given <span class="arithmatex">\(p\)</span>, we have <span class="arithmatex">\(w = g + ps\)</span>. However, it is a little cumbersome to work with and we can get <span class="arithmatex">\(w\)</span> in terms of <span class="arithmatex">\(g\)</span>-<span class="arithmatex">\(ps\)</span>-<span class="arithmatex">\(w\)</span> triangle directly by projecting <span class="arithmatex">\(w\)</span> onto <span class="arithmatex">\(s\)</span> and <span class="arithmatex">\(g\)</span> to give two equations we can solve for <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(L\)</span>, the length of <span class="arithmatex">\(w\)</span>. We have</p>
+<div class="arithmatex">\[s\cdot w = L\cos(\Xi-\beta) = s\cdot g + p\, s\cdot s = \cos(\Xi) + p\]</div>
+<p>and</p>
+<div class="arithmatex">\[g\cdot w = L\cos(\beta) = g\cdot g + p g\cdot s = 1 + p\, \cos(\Xi)\]</div>
+<p>This yields two simultaneous equations for <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(L\)</span>, with solutions</p>
+<div class="arithmatex">\[p = \frac{\sin(\beta)}{\sin(\Xi-\beta)}\]</div>
+<p>and</p>
+<div class="arithmatex">\[L = \frac{\sin(\Xi)}{\sin(\Xi-\beta)}\]</div>
+<p>First define <span class="arithmatex">\(w\)</span> on the <span class="arithmatex">\(n\)</span> basis</p>
 <div class="highlight"><pre><span></span><code><span class="n">wu</span> <span class="o">=</span> <span class="n">gu</span> <span class="o">+</span> <span class="n">p</span><span class="o">*</span><span class="n">su</span>
 <span class="n">print_vec</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">wu</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">)</span>
 </code></pre></div>
@@ -1147,25 +1157,25 @@ First define <span class="arithmatex">\(w\)</span> on the <span class="arithmate
             \tan(\beta) = \frac{\sin{\left (i \right )} \sin{\left (\iota  \right )} \cos{\left (d \right )} + \cos{\left (i \right )} \cos{\left (\iota  \right )}}{\left(\sin{\left (i \right )} \cos{\left (d \right )} \cos{\left (\iota  \right )} - \sin{\left (\iota  \right )} \cos{\left (i \right )}\right) \cos{\left (\mu  \right )} - \sin{\left (d \right )} \sin{\left (i \right )} \sin{\left (\mu  \right )}} \nonumber
         \end{equation}
         \]</div>
-<p>We can now use the form of <span class="arithmatex">\(p\)</span> found by solving <span class="arithmatex">\(w\wedge G = 0\)</span> to obtain <span class="arithmatex">\(\sin(\Xi)\)</span>. First note that <span class="arithmatex">\(N\)</span>, the numerator of <span class="arithmatex">\(p\)</span>, is related to <span class="arithmatex">\(\beta\)</span> via
-<span class="arithmatex">\(<span class="arithmatex">\(\sin(\beta) = \frac{N}{\sin(\Psi)}\)</span>\)</span>
-Check</p>
+<p>We can now use the form of <span class="arithmatex">\(p\)</span> found by solving <span class="arithmatex">\(w\wedge G = 0\)</span> to obtain <span class="arithmatex">\(\sin(\Xi)\)</span>. First note that <span class="arithmatex">\(N\)</span>, the numerator of <span class="arithmatex">\(p\)</span>, is related to <span class="arithmatex">\(\beta\)</span> via</p>
+<div class="arithmatex">\[\sin(\beta) = \frac{N}{\sin(\Psi)}\]</div>
+<p>Check</p>
 <div class="highlight"><pre><span></span><code><span class="n">sin_beta_check</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">numer</span><span class="p">(</span><span class="n">p_soln</span><span class="p">)</span><span class="o">/</span><span class="n">sin</span><span class="p">(</span><span class="n">Psi</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin_beta</span>
 <span class="k">assert</span> <span class="n">sin_beta_check</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span> <span class="n">sin_beta_check</span> <span class="p">)</span>
 </code></pre></div>
 <div class="arithmatex">\[\displaystyle 0\]</div>
-<p>Given our solution for <span class="arithmatex">\(p\)</span>, we can write
-<span class="arithmatex">\(<span class="arithmatex">\(p = \frac{\sin(\beta)}{\sin(\Xi-\beta)} = \frac{N}{D}\)</span>\)</span>
-Eliminating <span class="arithmatex">\(N\)</span> using the above relationship with <span class="arithmatex">\(\beta\)</span> and solving for <span class="arithmatex">\(D\)</span> gives
-<span class="arithmatex">\(<span class="arithmatex">\(D = \sin(\Psi)\sin(\Xi-\beta)\)</span>\)</span>
-Note that using this to eliminate <span class="arithmatex">\(\sin(\Xi-\beta)\)</span> in our solution for <span class="arithmatex">\(L\)</span> gives
-<span class="arithmatex">\(<span class="arithmatex">\(L = \frac{\sin(\Xi)\sin(\Psi)}{D}\)</span>\)</span>
-Expanding the double angle in <span class="arithmatex">\(D\)</span> and solving for <span class="arithmatex">\(\sin(\Xi)\)</span> gives
-<span class="arithmatex">\(<span class="arithmatex">\(\sin(\Xi) = \frac{D + N\cos(\Xi)}{B}\)</span>\)</span>
-where
-<span class="arithmatex">\(<span class="arithmatex">\(\cos(\beta) = \frac{B}{\sin(\Psi)}\)</span>\)</span>
-Thus</p>
+<p>Given our solution for <span class="arithmatex">\(p\)</span>, we can write</p>
+<div class="arithmatex">\[p = \frac{\sin(\beta)}{\sin(\Xi-\beta)} = \frac{N}{D}\]</div>
+<p>Eliminating <span class="arithmatex">\(N\)</span> using the above relationship with <span class="arithmatex">\(\beta\)</span> and solving for <span class="arithmatex">\(D\)</span> gives</p>
+<div class="arithmatex">\[D = \sin(\Psi)\sin(\Xi-\beta)\]</div>
+<p>Note that using this to eliminate <span class="arithmatex">\(\sin(\Xi-\beta)\)</span> in our solution for <span class="arithmatex">\(L\)</span> gives</p>
+<div class="arithmatex">\[L = \frac{\sin(\Xi)\sin(\Psi)}{D}\]</div>
+<p>Expanding the double angle in <span class="arithmatex">\(D\)</span> and solving for <span class="arithmatex">\(\sin(\Xi)\)</span> gives</p>
+<div class="arithmatex">\[\sin(\Xi) = \frac{D + N\cos(\Xi)}{B}\]</div>
+<p>where</p>
+<div class="arithmatex">\[\cos(\beta) = \frac{B}{\sin(\Psi)}\]</div>
+<p>Thus</p>
 <div class="highlight"><pre><span></span><code><span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">denom</span><span class="p">(</span><span class="n">p_soln</span><span class="p">)</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">Psi</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">Xi</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">Psi</span><span class="p">))</span>
 <span class="n">sinXi</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">beta</span><span class="p">),</span><span class="n">sin_beta</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">beta</span><span class="p">),</span><span class="n">cos_beta</span><span class="p">)</span>
 <span class="n">print_eq</span><span class="p">(</span> <span class="sa">r</span><span class="s2">&quot;\sin(\Xi)&quot;</span><span class="p">,</span> <span class="n">sinXi</span><span class="p">)</span>
@@ -1176,9 +1186,9 @@ Thus</p>
         \end{equation}
         \]</div>
 <h3 id="the-shadow-coordinates">The Shadow Coordinates</h3>
-<p>Let's now get the cartesian coordinates of the shadow tip in the dial face frame.
-<span class="arithmatex">\(<span class="arithmatex">\(w = L \hat{w}\)</span>\)</span>
-and so can work with <span class="arithmatex">\(\hat{w}\)</span> and scale up by after.</p>
+<p>Let's now get the cartesian coordinates of the shadow tip in the dial face frame.</p>
+<div class="arithmatex">\[w = L \hat{w}\]</div>
+<p>and so can work with <span class="arithmatex">\(\hat{w}\)</span> and scale up by after.</p>
 <div class="highlight"><pre><span></span><code><span class="n">print_eq</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\frac</span><span class="si">{x}{L}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">what</span><span class="o">|</span><span class="n">m1</span><span class="p">)</span>
 </code></pre></div>
 <div class="arithmatex">\[\displaystyle 
