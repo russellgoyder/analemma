@@ -1,11 +1,4 @@
 name: Build and publish sundial notebooks
-author: Russell Goyder
-description: Workflow to publish sundial workbooks with custom step to hack around LaTeX issues
-
-inputs:
-  source:
-    description: Path to the folder that contains the Notebooks
-    default: docs
 
 on:
   workflow_dispatch:
@@ -43,8 +36,8 @@ jobs:
   
       - name: Jupyter to Markdown Conversion
         run: |
-          find ${{ inputs.source }} -type 'f' -name '*.ipynb' -not -name "*-checkpoint.ipynb" | xargs jupyter nbconvert --to Markdown
-          find ${{ inputs.source }} -type 'f' -name "*.ipynb" -delete
+          find docs -type 'f' -name '*.ipynb' -not -name "*-checkpoint.ipynb" | xargs jupyter nbconvert --to Markdown
+          find docs -type 'f' -name "*.ipynb" -delete
         shell: bash
   
       - name: Trigger publishing
