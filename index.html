@@ -636,7 +636,7 @@
             n_3 &amp;= \left ( - \sin{\left (\alpha  \right )} \cos{\left (\theta  \right )} + \sin{\left (\theta  \right )} \cos{\left (\alpha  \right )} \cos{\left (\psi  \right )}\right ) \boldsymbol{e}_{1} + \sin{\left (\psi  \right )} \sin{\left (\theta  \right )} \boldsymbol{e}_{2} + \left ( \sin{\left (\alpha  \right )} \sin{\left (\theta  \right )} \cos{\left (\psi  \right )} + \cos{\left (\alpha  \right )} \cos{\left (\theta  \right )}\right ) \boldsymbol{e}_{3} \nonumber
             \end{align}
             \]</div>
-<p>Check that this basis is orthnormal. Geometric product of the <span class="arithmatex">\(\{n_i\}\)</span> should give the pseudoscalar <span class="arithmatex">\(I = e_1 \wedge e_2 \wedge e_3\)</span></p>
+<p>Check that this basis is orthonormal. Geometric product of the <span class="arithmatex">\(\{n_i\}\)</span> should give the pseudoscalar <span class="arithmatex">\(I = e_1 \wedge e_2 \wedge e_3\)</span></p>
 <div class="highlight"><pre><span></span><code><span class="n">n123</span> <span class="o">=</span> <span class="p">(</span><span class="n">n1</span><span class="o">*</span><span class="n">n2</span><span class="o">*</span><span class="n">n3</span><span class="p">)</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">()</span>
 <span class="k">assert</span> <span class="n">n123</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">equals</span><span class="p">((</span><span class="n">e1</span><span class="o">*</span><span class="n">e2</span><span class="o">*</span><span class="n">e3</span><span class="p">)</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">n123</span><span class="p">)</span>
@@ -677,7 +677,7 @@
         \end{equation}
         \]</div>
 <h3 id="dial-face-and-gnomon">Dial face and gnomon</h3>
-<p>Define an orthnormal frame <span class="arithmatex">\(u_1, u_2, u_3\)</span> as the unevaluated version of <span class="arithmatex">\(n_1, n_2, n_3\)</span>.</p>
+<p>Define an orthonormal frame <span class="arithmatex">\(u_1, u_2, u_3\)</span> as the unevaluated version of <span class="arithmatex">\(n_1, n_2, n_3\)</span>.</p>
 <p><img alt="" src="https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/DialFrame.png?token=GHSAT0AAAAAAB73Q3JNJN46TIEHP3QCWWGYZAWGADA" title="Frame embedded in the sundial's face." />.</p>
 <div class="highlight"><pre><span></span><code><span class="n">G3u</span> <span class="o">=</span> <span class="n">Ga</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">)</span>
 
