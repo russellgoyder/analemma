@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# old MATLAB version of plots for reference
+.matlab_archive
