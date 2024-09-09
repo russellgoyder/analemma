@@ -6,9 +6,9 @@ theme:
 
 nav:
  - Home: 'index.md'
- - Sundial Calculations: 'sundial.md'
- - The Equation of Time: 'equation_of_time.md'
  - Analemma Plots: 'sundial_plots.md'
+ - The Equation of Time: 'equation_of_time.md'
+ - Sundial Calculations: 'sundial.md'
  - API Reference: 'api_reference.md'
 
 markdown_extensions:
