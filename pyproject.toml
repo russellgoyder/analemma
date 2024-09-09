@@ -1,0 +1,25 @@
+[project]
+name = "analemma"
+description = "Calculate sundial geometry and plot the analemma"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+authors = [
+    { name = "Russell Goyder", email = "russell.goyder@gmail.com" }
+]
+license = { text = "MIT License" }
+keywords = []
+dependencies = [
+    "numpy"
+]
+version = "0.0.1"
+
+[project.urls]
+homepage = "https://russellgoyder.github.io/sundial"
+
+[build-system]
+requires = ["setuptools>61.0", "wheel"]
+build-backend = 'setuptools.build_meta'

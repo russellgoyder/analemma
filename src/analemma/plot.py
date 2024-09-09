@@ -1,203 +1,17 @@
 """
-Implementation of formulae for calculating and plotting sundial geometry
+Plot analemmas
 """
 
-import math, numpy as np
+import numpy as np
 from numpy import sin, cos
 from scipy import optimize as sci_opt
+from dataclasses import dataclass
 import datetime
-from dataclasses import dataclass, field
 from enum import Enum
+from analemma import geometry, orbit
 
 
-def hour_angle_terms(alpha, sigma, psi, iota_minus_theta=np.nan):
-    """
-    Generalized hour angle of the sun measured as the angle between the gnomon and a sun ray
-
-    Return the numerator and denominator in the tangent of the angle. Each contains a factor
-    of sin(Xi) which cancels in the ratio.
-
-    When iota_minus_theta is zero, this reduces to the common definition of hour angle
-
-    :param alpha Tilt of Earth's axis of rotation from normal to the plane of its orbit
-    :param sigma Angle between Earth-Sun vector and the same at summer solstice
-    :param psi Measuring the rotation of the Earth
-    :param iota_minus_theta Angle of gnomon in the meridian plane relative to latitude
-    """
-
-    if np.isnan(iota_minus_theta):
-        iota_minus_theta = 0.0
-
-    sinXi_sin_mu = sin(psi) * cos(sigma) * cos(alpha) - cos(psi) * sin(sigma)
-
-    term1 = cos(psi) * cos(sigma) * cos(alpha) + sin(psi) * sin(sigma)
-    sinXi_cos_mu = term1 * cos(iota_minus_theta) - cos(sigma) * sin(alpha) * sin(
-        iota_minus_theta
-    )
-
-    return (sinXi_sin_mu, sinXi_cos_mu)
-
-
-def hour_angle(alpha, sigma, psi, iota_minus_theta=np.nan):
-    "Evaluate the inverse tangent of the sun's hour angle"
-
-    sinXi_sin_mu, sinXi_cos_mu = hour_angle_terms(alpha, sigma, psi, iota_minus_theta)
-    return np.arctan2(sinXi_sin_mu, sinXi_cos_mu)
-
-
-def shadow_denom(alpha, sigma, psi, theta, i, d):
-    "The denominator in the shadow coordinate expressions"
-
-    sinXi_sin_mu_s, sinXi_cos_mu_s = hour_angle_terms(
-        alpha, sigma, psi
-    )  # calc with gnomon as a style
-    return (
-        sinXi_cos_mu_s * (sin(i) * cos(d) * cos(theta) - sin(theta) * cos(i))
-        - sinXi_sin_mu_s * sin(d) * sin(i)
-    ) + (sin(i) * sin(theta) * cos(d) + cos(i) * cos(theta)) * sin(alpha) * cos(sigma)
-
-
-def shadow_coords_xy(alpha, sigma, psi, iota, theta, i, d):
-    """
-    Calculate the x and y coordinates of the tip of the shadow in the frame embedded in the dial face
-
-    alpha, sigma, psi, iota and theta are as defined in sd_hour_angle_terms. The angles i and d
-    define the orientation of the dial face.
-    """
-
-    sinXi_sin_mu, sinXi_cos_mu = hour_angle_terms(alpha, sigma, psi, iota - theta)
-
-    D_denom = shadow_denom(alpha, sigma, psi, theta, i, d)
-
-    x = (-sin(d) * sinXi_sin_mu * cos(iota) + cos(d) * sinXi_cos_mu) / D_denom
-    y = (
-        -(
-            sin(d) * cos(i) * sinXi_cos_mu
-            + sin(i) * sin(iota) * sinXi_sin_mu
-            + sinXi_sin_mu * cos(d) * cos(i) * cos(iota)
-        )
-        / D_denom
-    )
-
-    return (x, y)
-
-
-pi = math.pi
-
-
-@dataclass
-class PlanetParameters:
-    """
-    Parameters defining a planet for sundial calculation purposes
-
-    :param N Number of mean days in a year
-    :param T_d Number of seconds in a mean day
-    :param rho Angle between axes of the ellipse and the equinoxes / solstices
-    :param alpha Inclination of the earths axis of rotation
-    :param a Length of the planet's orbit's semi-major axis
-    :param e Eccentricity of the planet's orbit
-    """
-
-    N: float
-    T_d: int
-    rho: float
-    alpha: float
-    a: float
-    e: float
-    T_y: int = field(init=False)
-    om_y: float = field(init=False)
-    om_d: float = field(init=False)
-    om_sd: float = field(init=False)
-    T_sd: float = field(init=False)
-    Om: float = field(init=False)
-
-    def __post_init__(self):
-        self.T_y = self.N * self.T_d  # number of seconds in a mean year
-        self.om_y = (
-            2 * pi / self.T_y
-        )  # mean angular speed of the earth's centre of mass in its orbit
-        self.om_d = (
-            2 * pi / self.T_d
-        )  # angular speed of a point on the earth about the earth's centre of mass
-        self.om_sd = (
-            (self.N + 1) / self.N * self.om_d
-        )  # angular speed of a point on an earth that revolves once per siderial day
-        self.T_sd = (
-            self.N / (self.N + 1) * self.T_d
-        )  # number of seconds in a siderial day
-        self.Om = (
-            pi / self.T_y * self.a
-        )  # angular speed parameter used in spinor orbit formalism ( = om_y / 2 * a )
-
-    @classmethod
-    def earth(cls):
-        return PlanetParameters(
-            N=365.2422,
-            T_d=24 * 3600,
-            rho=12.25 / 180 * pi,
-            alpha=23.5 / 180 * pi,
-            a=149598000000,
-            e=0.017,
-        )
-
-
-earth = PlanetParameters.earth()
-
-
-def _kepler_params(planet: PlanetParameters = earth, e=None):
-    a = planet.a
-    if not e:
-        e = planet.e
-    b = a * math.sqrt(1 - e**2)  # semi-minor axis
-    A = math.sqrt((a + b) / 2)
-    B = math.sqrt((a - b) / 2)
-    return A, B, planet.Om, planet.T_y
-
-
-def orbital_time(s, planet: PlanetParameters = earth, e=None):
-    "Calculate orbital time given time parameter, t(s)"
-    A, B, Om, T_y = _kepler_params(planet, e)
-    return (A**2 + B**2) * s + A * B / Om * sin(2 * Om * s) + T_y / 2
-
-
-_s_finegrained = np.linspace(-pi / earth.Om / 2, pi / earth.Om / 2, 10_000)
-
-
-def _key(e: float) -> int:
-    "The first four significant figures of the given number"
-    return int(10_000 * e)
-
-
-_t_finegrained = {_key(earth.e): orbital_time(_s_finegrained)}
-
-
-def spinor_time(t, planet: PlanetParameters = earth, e=None):
-    """
-    Invert t(s), the relationship of orbital time t with the parameter in the spinor
-    treatment of the Kepler problem, s, to give s(t).
-
-    Keep a cache of interpolants, one per eccentricity.
-    """
-    if not e:
-        e = planet.e
-    k = _key(e)
-    if k not in _t_finegrained.keys():
-        _t_finegrained[k] = orbital_time(_s_finegrained, planet, e)
-    return np.interp(t, _t_finegrained[k], _s_finegrained)
-
-
-def orbital_radius(s, planet: PlanetParameters = earth, e=None):
-    "Calculate orbital radial coordinate given spinor time parameter, r(s)"
-    A, B, Om, _ = _kepler_params(planet, e)
-    return A**2 + B**2 + 2 * A * B * cos(2 * Om * s)
-
-
-def orbital_angle(s, planet: PlanetParameters = earth, e=None):
-    "Calculate orbital angular coordinate given time parameter, phi(s)"
-    A, B, Om, _ = _kepler_params(planet, e)
-    tanSigY = (A**2 - B**2) * sin(2 * Om * s)
-    tanSigX = (A**2 + B**2) * cos(2 * Om * s) + 2 * A * B
-    return np.arctan2(tanSigY, tanSigX) + pi
+pi = np.pi
 
 
 @dataclass
@@ -205,12 +19,13 @@ class DialParameters:
     """
     Parameters defining a sundial
 
-    :param theta 90 degrees minus the latitude of the sundial
-    :param iota Inclination of the gnomon
-    :param i Inclination of the dial face
-    :param d Declination of the dial face
-    :x_length Width of the dial face in gnomon lengths
-    :y_length Length of the dial face in gnomon lengths
+    Parameters:
+        theta: $90^\circ - \\theta$ is the latitude of the sundial
+        iota: Inclination of the gnomon
+        i: Inclination of the dial face
+        d: Declination of the dial face
+        x_length: Width of the dial face in gnomon lengths
+        y_length: Length of the dial face in gnomon lengths
     """
 
     theta: float
@@ -221,7 +36,13 @@ class DialParameters:
     y_length: float = 10
 
     def trim_coords(self, x: np.array, y: np.array):
-        # set points falling outside the dial face to nan so they don't show up when plotted
+        """
+        Set points falling outside the dial face to nan so they don't show up when plotted
+
+        Parameters:
+            x: x-values of a set of points in 2-d
+            y: y-values of a set of points in 2-d
+        """
         dial_trim = lambda vec, dial_length: np.array(
             [coord if np.abs(coord) < dial_length else np.nan for coord in vec]
         )
@@ -233,14 +54,16 @@ def _psi(t, planet):
 
 
 def _sigma(t, planet):
-    phi = orbital_angle(spinor_time(t))
+    phi = orbit.orbital_angle(orbit.spinor_time(t))
     return np.mod(
         pi + planet.rho + phi, 2 * pi
     )  # phi starts at perihelion, sigma starts at winter solstice
 
 
-def sin_sunray_dialface_angle(t, planet: PlanetParameters, dial: DialParameters):
-    "Sine of the angle between the sun ray and the dial face"
+def sin_sunray_dialface_angle(t : np.array, planet: orbit.PlanetParameters, dial: DialParameters):
+    """
+    Sine of the angle between the sun ray and the dial face
+    """
 
     alpha = planet.alpha
     theta = dial.theta
@@ -285,7 +108,13 @@ class SunTimes:
     """
     Time of key events in the journey of the sun across the sky
 
-    Time zero is at perihelion
+    Time zero is at perihelion. Note that all such key events are defined relatiev to the dial, not the ground.
+
+    Attributes:
+        sunrise: The first time in the given day that the sun ray is parallel to the dial face
+        noon: The time after sunrise and before sunset when the angle bewteen sun ray and dial face is largest
+        sunset: The second time in the given day that the sun ray is parallel to the dial face
+        days_since_perihelion: Integer defining the day
     """
 
     def __init__(
@@ -300,8 +129,10 @@ class SunTimes:
         self.sunset = _SunTime(sunset, days_since_perihelion)
         self.days_since_perihelion = days_since_perihelion
 
-    def sample_times_for_one_day(self, res=1000):
-        "Generate an array of times suitable for sampling the progress of the sun across the sky"
+    def sample_times_for_one_day(self, res : int = 1000):
+        """
+        Generate an array of times suitable for sampling the progress of the sun across the sky
+        """
         # time zero is at perihelion close to noon so start 12 hours back to capture sun rise and set in order
         raw_times = np.linspace(
             (self.days_since_perihelion - 0.5) * 24 * 3600,
@@ -317,12 +148,17 @@ class SunTimes:
 
 
 def find_sun_rise_noon_set_relative_to_dial_face(
-    days_since_perihelion: int, planet: PlanetParameters, dial: DialParameters
+    days_since_perihelion: int, planet: orbit.PlanetParameters, dial: DialParameters
 ) -> SunTimes:
     """
     Find sunrise, noon and sunset (relative to the dial face)
 
     Note these because times are all relative to the dial face they do not match the common notions except for an analematic dial
+
+    Parameters:
+        days_since_perihelion: Integer defining the day
+        planet: Parameters of the planet
+        dial: Parameters of the sundial
     """
 
     # time when sunray meets dial face at pi/2 (90 degrees):
@@ -376,16 +212,18 @@ def orbit_date_to_day(the_date: datetime.date, year=2024) -> int:
 
 
 def sunray_dialface_angle_over_one_year(
-    planet: PlanetParameters, dial: DialParameters, hour_offset=0
+    planet: orbit.PlanetParameters, dial: DialParameters, hour_offset=0
 ):
-    "Calculate daily the time since perihelion in seconds and the corresponding sin(sunray-dialface angle)"
+    """
+    Calculate daily the time since perihelion in seconds and the corresponding sin(sunray-dialface angle)
+    """
     times = planet.T_d * np.arange(0, 365)
     times += hour_offset * 3600
     sines = np.array(sin_sunray_dialface_angle(times, planet, dial))
     return (times, sines)
 
 
-def find_daytime_offsets(planet: PlanetParameters, dial: DialParameters):
+def find_daytime_offsets(planet: orbit.PlanetParameters, dial: DialParameters):
     """
     Find the range of hours for which shadows are cast on the given dial
 
@@ -409,10 +247,10 @@ class Season(Enum):
     Autumn = 3
 
 
-def _calc_analemma_points(t: np.array, planet: PlanetParameters, dial: DialParameters):
+def _calc_analemma_points(t: np.array, planet: orbit.PlanetParameters, dial: DialParameters):
     psis = _psi(t, planet)
     sigmas = _sigma(t, planet)
-    x_raw, y_raw = shadow_coords_xy(
+    x_raw, y_raw = geometry.shadow_coords_xy(
         planet.alpha, sigmas, psis, dial.iota, dial.theta, dial.i, dial.d
     )
     x, y = dial.trim_coords(x_raw, y_raw)
@@ -426,7 +264,7 @@ def _calc_analemma_points(t: np.array, planet: PlanetParameters, dial: DialParam
 def _plot_analemma_segment(
     ax,
     times: np.array,
-    planet: PlanetParameters,
+    planet: orbit.PlanetParameters,
     dial: DialParameters,
     format_string="-b",
     label="",
@@ -438,7 +276,7 @@ def _plot_analemma_segment(
 
 
 def _analemma_plot_sampling_times(
-    season: Season, hour_offset, planet: PlanetParameters, dial: DialParameters
+    season: Season, hour_offset, planet: orbit.PlanetParameters, dial: DialParameters
 ):
 
     # season lengths are [89, 91, 94, 91] (Winter Spring Summer Autumn)
@@ -476,7 +314,7 @@ def plot_analemma_season_segment(
     ax,
     season: Season,
     hour_offset: int,
-    planet: PlanetParameters,
+    planet: orbit.PlanetParameters,
     dial: DialParameters,
     **kwargs,
 ):
@@ -517,9 +355,11 @@ _equinox_or_solstice_info = {
 
 
 def plot_special_sun_path(
-    ax, season: Season, planet: PlanetParameters, dial: DialParameters, **kwargs
+    ax, season: Season, planet: orbit.PlanetParameters, dial: DialParameters, **kwargs
 ):
-    "Plot the path of the sun across the dial on the equinox or solstice in the given season"
+    """
+    Plot the path of the sun across the dial on the equinox or solstice in the given season
+    """
 
     orbit_day = orbit_date_to_day(_equinox_or_solstice_info[season.value].date)
     sun_times = find_sun_rise_noon_set_relative_to_dial_face(orbit_day, planet, dial)
@@ -532,7 +372,7 @@ def plot_special_sun_path(
     psis = _psi(times, planet)
 
     sigma = _equinox_or_solstice_info[season.value].sigma
-    x_raw, y_raw = shadow_coords_xy(
+    x_raw, y_raw = geometry.shadow_coords_xy(
         planet.alpha, sigma, psis, dial.iota, dial.theta, dial.i, dial.d
     )
 
@@ -550,7 +390,7 @@ def plot_special_sun_path(
 def _analemma_point_coordinates(
     days_since_perihelion: int,
     hour_offset: int,
-    planet: PlanetParameters,
+    planet: orbit.PlanetParameters,
     dial: DialParameters,
 ):
     solstice_time = np.array([planet.T_d * days_since_perihelion + hour_offset * 3600])
@@ -562,7 +402,7 @@ def _analemma_point_coordinates(
 _sun_times_cache = {}
 
 
-def _get_sun_times(planet: PlanetParameters, dial: DialParameters):
+def _get_sun_times(planet: orbit.PlanetParameters, dial: DialParameters):
     key = (id(planet), id(dial))
     if key not in _sun_times_cache.keys():
         _sun_times_cache[key] = [
@@ -574,7 +414,7 @@ def _get_sun_times(planet: PlanetParameters, dial: DialParameters):
     return _sun_times_cache[key]
 
 
-def _solstice_days(planet: PlanetParameters, dial: DialParameters):
+def _solstice_days(planet: orbit.PlanetParameters, dial: DialParameters):
     sun_times = _get_sun_times(planet, dial)
     day_lengths = [
         st.sunset.hours_from_midnight - st.sunrise.hours_from_midnight
@@ -598,7 +438,7 @@ def _furthest_point(p1, p2):
 
 
 def _analemma_label_coordinates(
-    hour_offset: int, planet: PlanetParameters, dial: DialParameters
+    hour_offset: int, planet: orbit.PlanetParameters, dial: DialParameters
 ):
 
     june_solstice_day, december_solstice_day = _solstice_days(planet, dial)
@@ -631,7 +471,9 @@ def _analemma_label_coordinates(
 
 
 def hour_offset_to_oclock(hour_offset: int):
-    "Render an integer hour offset (eg +2) as the corresponding time (eg '2pm')"
+    """
+    Render an integer hour offset (eg +2) as the corresponding time (eg '2pm')
+    """
     if hour_offset == 0:
         return "12pm"
     elif hour_offset == -12:
@@ -645,9 +487,11 @@ def hour_offset_to_oclock(hour_offset: int):
 
 
 def annotate_analemma_with_hour(
-    ax, hour_offset: int, planet: PlanetParameters, dial: DialParameters
+    ax, hour_offset: int, planet: orbit.PlanetParameters, dial: DialParameters
 ):
-    "For the given hour, annotate with the time"
+    """
+    For the given hour, annotate with the time
+    """
     if hour_offset % 3 == 0:
         points = _analemma_label_coordinates(hour_offset, planet, dial)
         if points:

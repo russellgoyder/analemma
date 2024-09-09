@@ -1,0 +1,6 @@
+include LICENSE
+include pyproject.toml
+prune requirements_dev.txt
+prune dollar_dollar.py
+prune scripts
+

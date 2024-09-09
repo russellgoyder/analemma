@@ -1,8 +1,15 @@
-site_name: The Sundial Problem from a New Angle
+site_name: The Analemma Package
 theme:
   name: material
   palette:
     scheme: slate
+
+nav:
+ - Home: 'index.md'
+ - Sundial Calculations: 'sundial.md'
+ - The Equation of Time: 'equation_of_time.md'
+ - Analemma Plots: 'sundial_plots.md'
+ - API Reference: 'api_reference.md'
 
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -18,3 +25,7 @@ extra_javascript:
 
 extra_css:
   - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
+
+plugins:
+- search
+- mkdocstrings

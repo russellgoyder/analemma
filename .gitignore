@@ -131,3 +131,5 @@ dmypy.json
 # old MATLAB version of plots for reference
 .matlab_archive
 .octave
+
+todo.txt
