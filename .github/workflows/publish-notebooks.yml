@@ -1,4 +1,4 @@
-name: Build and publish sundial notebooks
+name: Build and publish analemma package documentation
 
 on:
   workflow_dispatch:
@@ -25,19 +25,17 @@ jobs:
           cache: pip
   
       - name: Install project dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements_dev.txt && pip install -e .
         shell: bash
   
       - name: Wrap LaTeX output
         run: |
-          python dollar_dollar.py docs/sundial.ipynb docs/index.ipynb
-          rm docs/sundial.ipynb
+          python scripts/dollar_dollar.py docs/sundial.ipynb docs/sundial.ipynb
         shell: bash
   
       - name: Jupyter to Markdown Conversion
         run: |
           find docs -type 'f' -name '*.ipynb' -not -name "*-checkpoint.ipynb" | xargs jupyter nbconvert --to Markdown
-          find docs -type 'f' -name "*.ipynb" -delete
         shell: bash
   
       - name: Trigger publishing

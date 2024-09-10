@@ -1,6 +1,12 @@
 galgebra>=0.5
 ipython>=8.11
 sympy>=1.11
+numpy
+scipy
+matplotlib
 jupyter>=1.0
 mkdocs>=1.5
 mkdocs-material>=9.5
+mkdocstrings-python
+build
+twine
