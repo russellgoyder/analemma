@@ -10,3 +10,4 @@ mkdocs-material>=9.5
 mkdocstrings-python
 build
 twine
+-e .
