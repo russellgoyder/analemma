@@ -2,7 +2,8 @@
 Implementation of formulae for calculating orbits
 """
 
-import math, numpy as np
+import math
+import numpy as np
 from numpy import sin, cos
 from dataclasses import dataclass, field
 

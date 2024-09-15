@@ -43,9 +43,8 @@ class DialParameters:
             x: x-values of a set of points in 2-d
             y: y-values of a set of points in 2-d
         """
-        dial_trim = lambda vec, dial_length: np.array(
-            [coord if np.abs(coord) < dial_length else np.nan for coord in vec]
-        )
+        def dial_trim(vec, dial_length):
+            return np.array([coord if np.abs(coord) < dial_length else np.nan for coord in vec])
         return (dial_trim(x, self.x_length), dial_trim(y, self.y_length))
 
 
@@ -443,9 +442,8 @@ def _analemma_label_coordinates(
 
     june_solstice_day, december_solstice_day = _solstice_days(planet, dial)
 
-    falls_on_dial = lambda x, y: (
-        True if abs(x) <= dial.x_length and abs(y) <= dial.y_length else False
-    )
+    def falls_on_dial(x, y):
+        return True if abs(x) <= dial.x_length and abs(y) <= dial.y_length else False
 
     xj, yj = _analemma_point_coordinates(june_solstice_day, hour_offset, planet, dial)
     june_solstice_falls_on_dial = falls_on_dial(xj, yj)
