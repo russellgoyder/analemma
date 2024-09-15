@@ -56,7 +56,6 @@ jobs:
 
   build:
     name: Build distribution 📦
-    if: ${{ github.ref == 'refs/heads/main' }}
     needs:
     - test
     - ruff
