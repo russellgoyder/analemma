@@ -46,9 +46,7 @@ The results of these derivations are implemented in two modules in the `analemma
 
 Finally, [analemma.plot][] provides functionality for plotting the analemma which is demonstrated in [Analemma Plots](sundial_plots.md).
 
-|  |  |
-| ------: | --------- |
-| Project Homepage | https://russellgoyder.github.io/sundial-latex/ |
-| Documentation | https://analemma.readthedocs.io/en/stable/ |
-| Repository | https://github.com/russellgoyder/sundial |
-| Issue Tracker | https://github.com/russellgoyder/sundial/issues |
+## Project Links
+
+ * [Homepage](https://russellgoyder.github.io/sundial-latex/)
+ * [Repository](https://github.com/russellgoyder/sundial)
