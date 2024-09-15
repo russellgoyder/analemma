@@ -10,6 +10,7 @@ nav:
  - The Equation of Time: 'equation_of_time.md'
  - Sundial Calculations: 'sundial.md'
  - API Reference: 'api_reference.md'
+ - Changelog: 'changelog.md'
 
 markdown_extensions:
   - pymdownx.arithmatex:

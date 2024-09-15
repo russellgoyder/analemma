@@ -20,7 +20,7 @@ class DialParameters:
     Parameters defining a sundial
 
     Parameters:
-        theta: $90^\circ - \\theta$ is the latitude of the sundial
+        theta: $90^\\circ - \\theta$ is the latitude of the sundial
         iota: Inclination of the gnomon
         i: Inclination of the dial face
         d: Declination of the dial face
@@ -217,7 +217,7 @@ def orbit_date_to_day(the_date: datetime.date, year=2024) -> int:
 
 
 def sunray_dialface_angle_over_one_year(
-    planet: orbit.PlanetParameters, dial: DialParameters, hour_offset=0
+    planet: orbit.PlanetParameters, dial: DialParameters, hour_offset: float = 0.0
 ):
     """
     Calculate daily the time since perihelion in seconds and the corresponding sin(sunray-dialface angle)
@@ -283,7 +283,10 @@ def _plot_analemma_segment(
 
 
 def _analemma_plot_sampling_times(
-    season: Season, hour_offset, planet: orbit.PlanetParameters, dial: DialParameters
+    season: Season,
+    hour_offset: float,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
 ):
     # season lengths are [89, 91, 94, 91] (Winter Spring Summer Autumn)
     # place equinoxes and solstices in the middle for plotting
@@ -319,12 +322,21 @@ _season_format_strings = ["--b", "-g", "-.r", ":k"]
 def plot_analemma_season_segment(
     ax,
     season: Season,
-    hour_offset: int,
+    hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
     **kwargs,
 ):
-    "Plot the analemma segment for the given season"
+    """
+    Plot the analemma segment for the given season
+
+    Parameters:
+        ax: matplotlib axes
+        season: The given season
+        hour_offset: Number of hours relative to noon, eg -2.25 corresponds to 9:45am
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
+    """
 
     times = _analemma_plot_sampling_times(season, hour_offset, planet, dial)
     return _plot_analemma_segment(
@@ -334,6 +346,36 @@ def plot_analemma_season_segment(
         dial,
         _season_format_strings[season.value],
         label="",
+        **kwargs,
+    )
+
+
+def plot_analemma(
+    ax,
+    hour_offset: float,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+    **kwargs,
+):
+    """
+    Plot the analemma
+
+    Parameters:
+        ax: matplotlib axes
+        hour_offset: Number of hours relative to noon, eg -2.25 corresponds to 9:45am
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
+    """
+
+    times = planet.T_d * np.arange(0, 365 + 1, dtype=float)
+    times += hour_offset * 3600
+    ssda = sin_sunray_dialface_angle(times, planet, dial)
+
+    return _plot_analemma_segment(
+        ax,
+        times[ssda > 0],
+        planet,
+        dial,
         **kwargs,
     )
 
@@ -395,7 +437,7 @@ def plot_special_sun_path(
 
 def _analemma_point_coordinates(
     days_since_perihelion: int,
-    hour_offset: int,
+    hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
 ):
@@ -444,7 +486,7 @@ def _furthest_point(p1, p2):
 
 
 def _analemma_label_coordinates(
-    hour_offset: int, planet: orbit.PlanetParameters, dial: DialParameters
+    hour_offset: float, planet: orbit.PlanetParameters, dial: DialParameters
 ):
     june_solstice_day, december_solstice_day = _solstice_days(planet, dial)
 
@@ -477,6 +519,8 @@ def _analemma_label_coordinates(
 def hour_offset_to_oclock(hour_offset: int):
     """
     Render an integer hour offset (eg +2) as the corresponding time (eg '2pm')
+
+    Note that any non-integer part of the hour offset will be truncated
     """
     if hour_offset == 0:
         return "12pm"
@@ -495,6 +539,8 @@ def annotate_analemma_with_hour(
 ):
     """
     For the given hour, annotate with the time
+
+    Note that any non-integer part of the hour offset will be truncated
     """
     if hour_offset % 3 == 0:
         points = _analemma_label_coordinates(hour_offset, planet, dial)
