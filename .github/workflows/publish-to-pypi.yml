@@ -1,11 +1,65 @@
 
-name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
+name: Python package CICD
 
-on: push
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements_dev.txt
+
+    - name: Test with pytest
+      run: |
+        pytest tests
+
+  ruff:
+    name: Lint and format with Ruff
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements_dev.txt
+
+    - name: Lint with Ruff
+      run: |
+        ruff check --output-format=github src
+      continue-on-error: true
+
+
   build:
     name: Build distribution 📦
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+    - test
+    - ruff
     runs-on: ubuntu-latest
 
     steps:
