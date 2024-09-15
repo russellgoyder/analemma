@@ -12,4 +12,5 @@ build
 twine
 ruff
 pytest
+pre-commit
 -e .
