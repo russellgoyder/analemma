@@ -1,28 +1,41 @@
 [project]
 name = "analemma"
-description = "Calculate sundial geometry and plot the analemma"
+description = "Calculate sundial geometry and the equation of time, and plot the analemma"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Development Status :: 2 - Pre-Alpha",
+
 ]
 authors = [
     { name = "Russell Goyder", email = "russell.goyder@gmail.com" }
 ]
 license = { text = "MIT License" }
-keywords = []
+keywords = [
+    "sundial",
+    "analemma",
+    "gnomon",
+    "equation of time",
+    "orbit",
+]
 dependencies = [
-    "numpy"
+    "numpy",
+    "scipy",
+    "matplotlib",
 ]
 dynamic = ["version"]
 
 [tool.setuptools_scm]
 
 [project.urls]
-homepage = "https://russellgoyder.github.io/sundial"
+Homepage = "https://russellgoyder.github.io/sundial-latex/"
+Documentation = "https://analemma.readthedocs.io/en/stable/"
+Repository = "https://github.com/russellgoyder/sundial"
+"Issue Tracker" = "https://github.com/russellgoyder/sundial/issues"
 
 [build-system]
 requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
-

@@ -1,10 +1,9 @@
-# Sundial Calculations
 
-NOTE: Placeholder for now. Proper doc and functionality arriving in coming weeks.
+The analemma is the beautiful double-loop path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. This package calculates and plots the analemma for all types of sundial anywhere on earth, or any planet.
 
-[![Build and publish sundial notebooks](https://github.com/russellgoyder/sundial/actions/workflows/publish-notebooks.yml/badge.svg)](https://github.com/russellgoyder/sundial/actions/workflows/publish-notebooks.yml)
-[![pages-build-deployment](https://github.com/russellgoyder/sundial/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/russellgoyder/sundial/actions/workflows/pages/pages-build-deployment)
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/russellgoyder/sundial/HEAD?labpath=docs/sundial.ipynb)
-
-See https://russellgoyder.github.io/sundial/.
+|  |  |
+| ------: | --------- |
+| Homepage | https://russellgoyder.github.io/sundial-latex/ |
+| Documentation | https://analemma.readthedocs.io/en/stable/ |
+| Repository | https://github.com/russellgoyder/sundial |
+| Issue Tracker | https://github.com/russellgoyder/sundial/issues |

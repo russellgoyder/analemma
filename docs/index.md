@@ -7,7 +7,7 @@ The `analemma` package performs sundial calculations, allowing for very general 
  * orbits and the equation of time for any planet
  * a plotting module to draw the analemma
 
-## Installation
+## Install
 
 ```bash
 pip install analemma
@@ -32,7 +32,9 @@ See [Analemma Plots](sundial_plots.md) for complete examples.
 
 ## Background
 
-The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. The exact formulae for the analemma are derived from first principles in [The Sundial Problem from a New Angle](https://russellgoyder.github.io/sundial-latex/) and reproduced using [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) in two Jupyter notebooks.
+The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. In this package, the analemma is expressed in an exact parametric expression whose derivation was first presented in 2006. See the [project homepage](https://russellgoyder.github.io/sundial-latex/) for more information.
+
+The full derivation is reproduced here using [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) in two Jupyter notebooks.
 
  * [Sundial Calculations](sundial.md) works in terms of several angles describing the sundial and its planet, two of which vary with time. $\sigma_t$ measures the progress of the planet around its orbit and $\psi_t$ measures the rotation of the planet on its axis.
  * [The Equation of Time](equation_of_time.md) relates $\sigma_t$ and $\psi_t$ to time by calculating the planet's orbit.
@@ -44,3 +46,9 @@ The results of these derivations are implemented in two modules in the `analemma
 
 Finally, [analemma.plot][] provides functionality for plotting the analemma which is demonstrated in [Analemma Plots](sundial_plots.md).
 
+|  |  |
+| ------: | --------- |
+| Project Homepage | https://russellgoyder.github.io/sundial-latex/ |
+| Documentation | https://analemma.readthedocs.io/en/stable/ |
+| Repository | https://github.com/russellgoyder/sundial |
+| Issue Tracker | https://github.com/russellgoyder/sundial/issues |
