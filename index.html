@@ -247,9 +247,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#install" class="md-nav__link">
     <span class="md-ellipsis">
-      Installation
+      Install
     </span>
   </a>
   
@@ -388,9 +388,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#install" class="md-nav__link">
     <span class="md-ellipsis">
-      Installation
+      Install
     </span>
   </a>
   
@@ -436,7 +436,7 @@
 <li>orbits and the equation of time for any planet</li>
 <li>a plotting module to draw the analemma</li>
 </ul>
-<h2 id="installation">Installation</h2>
+<h2 id="install">Install</h2>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>analemma
 </code></pre></div>
 <h2 id="usage">Usage</h2>
@@ -453,7 +453,8 @@
 </code></pre></div>
 <p>See <a href="sundial_plots/">Analemma Plots</a> for complete examples.</p>
 <h2 id="background">Background</h2>
-<p>The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. The exact formulae for the analemma are derived from first principles in <a href="https://russellgoyder.github.io/sundial-latex/">The Sundial Problem from a New Angle</a> and reproduced using <a href="https://www.sympy.org/en/index.html">SymPy</a> and <a href="https://github.com/pygae/galgebra">GAlgebra</a> in two Jupyter notebooks.</p>
+<p>The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. In this package, the analemma is expressed in an exact parametric expression whose derivation was first presented in 2006. See the <a href="https://russellgoyder.github.io/sundial-latex/">project homepage</a> for more information.</p>
+<p>The full derivation is reproduced here using <a href="https://www.sympy.org/en/index.html">SymPy</a> and <a href="https://github.com/pygae/galgebra">GAlgebra</a> in two Jupyter notebooks.</p>
 <ul>
 <li><a href="sundial/">Sundial Calculations</a> works in terms of several angles describing the sundial and its planet, two of which vary with time. <span class="arithmatex">\(\sigma_t\)</span> measures the progress of the planet around its orbit and <span class="arithmatex">\(\psi_t\)</span> measures the rotation of the planet on its axis.</li>
 <li><a href="equation_of_time/">The Equation of Time</a> relates <span class="arithmatex">\(\sigma_t\)</span> and <span class="arithmatex">\(\psi_t\)</span> to time by calculating the planet's orbit.</li>
@@ -464,6 +465,32 @@
 <li><a class="autorefs autorefs-internal" href="api_reference/#analemma.orbit">analemma.orbit</a> implements the results from <a href="equation_of_time/">The Equation of Time</a></li>
 </ul>
 <p>Finally, <a class="autorefs autorefs-internal" href="api_reference/#analemma.plot">analemma.plot</a> provides functionality for plotting the analemma which is demonstrated in <a href="sundial_plots/">Analemma Plots</a>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">Project Homepage</td>
+<td>https://russellgoyder.github.io/sundial-latex/</td>
+</tr>
+<tr>
+<td style="text-align: right;">Documentation</td>
+<td>https://analemma.readthedocs.io/en/stable/</td>
+</tr>
+<tr>
+<td style="text-align: right;">Repository</td>
+<td>https://github.com/russellgoyder/sundial</td>
+</tr>
+<tr>
+<td style="text-align: right;">Issue Tracker</td>
+<td>https://github.com/russellgoyder/sundial/issues</td>
+</tr>
+</tbody>
+</table>
 
 
 
