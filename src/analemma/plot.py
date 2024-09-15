@@ -350,6 +350,36 @@ def plot_analemma_season_segment(
     )
 
 
+def plot_analemma(
+    ax,
+    hour_offset: float,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+    **kwargs,
+):
+    """
+    Plot the analemma
+
+    Parameters:
+        ax: matplotlib axes
+        hour_offset: Number of hours relative to noon, eg -2.25 corresponds to 9:45am
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
+    """
+
+    times = planet.T_d * np.arange(0, 365 + 1, dtype=float)
+    times += hour_offset * 3600
+    ssda = sin_sunray_dialface_angle(times, planet, dial)
+
+    return _plot_analemma_segment(
+        ax,
+        times[ssda > 0],
+        planet,
+        dial,
+        **kwargs,
+    )
+
+
 @dataclass
 class _OrbitDateAndAngle:
     date: datetime.date
