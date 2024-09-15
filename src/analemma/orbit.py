@@ -77,7 +77,7 @@ An instance of PlanetParameters representing Earth
 """
 
 
-def _kepler_params(planet: PlanetParameters = earth, e : float = None):
+def _kepler_params(planet: PlanetParameters = earth, e: float = None):
     a = planet.a
     if not e:
         e = planet.e
@@ -87,7 +87,7 @@ def _kepler_params(planet: PlanetParameters = earth, e : float = None):
     return A, B, planet.Om, planet.T_y
 
 
-def orbital_time(s : np.array, planet: PlanetParameters = earth, e: float = None):
+def orbital_time(s: np.array, planet: PlanetParameters = earth, e: float = None):
     """
     Calculate orbital time given time parameter, t(s)
 
@@ -105,6 +105,7 @@ _s_finegrained = np.linspace(-pi / earth.Om / 2, pi / earth.Om / 2, 10_000)
 1-d grid used when inverting the relationship between orbital and spinor time
 """
 
+
 def _key(e: float) -> int:
     """
     The first four significant figures of the given number
@@ -117,7 +118,8 @@ _t_finegrained = {_key(earth.e): orbital_time(_s_finegrained)}
 Cache of interpolation data used when inverting the relationship between orbital and spinor time 
 """
 
-def spinor_time(t : np.array, planet: PlanetParameters = earth, e : float = None):
+
+def spinor_time(t: np.array, planet: PlanetParameters = earth, e: float = None):
     """
     Invert t(s), the relationship of orbital time t with the parameter in the spinor
     treatment of the Kepler problem, s, to give s(t).
@@ -132,7 +134,7 @@ def spinor_time(t : np.array, planet: PlanetParameters = earth, e : float = None
     return np.interp(t, _t_finegrained[k], _s_finegrained)
 
 
-def orbital_radius(s : np.array, planet: PlanetParameters = earth, e: float = None):
+def orbital_radius(s: np.array, planet: PlanetParameters = earth, e: float = None):
     """
     Calculate orbital radial coordinate given spinor time parameter, r(s)
     """

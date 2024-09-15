@@ -43,8 +43,12 @@ class DialParameters:
             x: x-values of a set of points in 2-d
             y: y-values of a set of points in 2-d
         """
+
         def dial_trim(vec, dial_length):
-            return np.array([coord if np.abs(coord) < dial_length else np.nan for coord in vec])
+            return np.array(
+                [coord if np.abs(coord) < dial_length else np.nan for coord in vec]
+            )
+
         return (dial_trim(x, self.x_length), dial_trim(y, self.y_length))
 
 
@@ -59,7 +63,9 @@ def _sigma(t, planet):
     )  # phi starts at perihelion, sigma starts at winter solstice
 
 
-def sin_sunray_dialface_angle(t : np.array, planet: orbit.PlanetParameters, dial: DialParameters):
+def sin_sunray_dialface_angle(
+    t: np.array, planet: orbit.PlanetParameters, dial: DialParameters
+):
     """
     Sine of the angle between the sun ray and the dial face
     """
@@ -128,7 +134,7 @@ class SunTimes:
         self.sunset = _SunTime(sunset, days_since_perihelion)
         self.days_since_perihelion = days_since_perihelion
 
-    def sample_times_for_one_day(self, res : int = 1000):
+    def sample_times_for_one_day(self, res: int = 1000):
         """
         Generate an array of times suitable for sampling the progress of the sun across the sky
         """
@@ -240,13 +246,16 @@ def find_daytime_offsets(planet: orbit.PlanetParameters, dial: DialParameters):
 
 class Season(Enum):
     "Start in Winter because orbit time starts at perihelion"
+
     Winter = 0
     Spring = 1
     Summer = 2
     Autumn = 3
 
 
-def _calc_analemma_points(t: np.array, planet: orbit.PlanetParameters, dial: DialParameters):
+def _calc_analemma_points(
+    t: np.array, planet: orbit.PlanetParameters, dial: DialParameters
+):
     psis = _psi(t, planet)
     sigmas = _sigma(t, planet)
     x_raw, y_raw = geometry.shadow_coords_xy(
@@ -269,7 +278,6 @@ def _plot_analemma_segment(
     label="",
     **kwargs,
 ):
-
     x, y = _calc_analemma_points(times, planet, dial)
     return ax.plot(x, y, format_string, label=label, **kwargs)
 
@@ -277,7 +285,6 @@ def _plot_analemma_segment(
 def _analemma_plot_sampling_times(
     season: Season, hour_offset, planet: orbit.PlanetParameters, dial: DialParameters
 ):
-
     # season lengths are [89, 91, 94, 91] (Winter Spring Summer Autumn)
     # place equinoxes and solstices in the middle for plotting
     season_boundaries = [0, 44, 135, 229, 320]
@@ -439,7 +446,6 @@ def _furthest_point(p1, p2):
 def _analemma_label_coordinates(
     hour_offset: int, planet: orbit.PlanetParameters, dial: DialParameters
 ):
-
     june_solstice_day, december_solstice_day = _solstice_days(planet, dial)
 
     def falls_on_dial(x, y):
