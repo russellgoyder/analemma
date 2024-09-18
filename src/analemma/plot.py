@@ -8,6 +8,7 @@ from scipy import optimize as sci_opt
 from dataclasses import dataclass
 import datetime
 from enum import Enum
+from typing import TypeVar
 from analemma import geometry, orbit
 
 
@@ -269,17 +270,19 @@ def _calc_analemma_points(
     return xx, yy
 
 
+Axes = TypeVar("matplotlib.axes.Axes")
+
+
 def _plot_analemma_segment(
-    ax,
+    ax: Axes,
     times: np.array,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
-    format_string="-b",
-    label="",
+    format_string: str,
     **kwargs,
 ):
     x, y = _calc_analemma_points(times, planet, dial)
-    return ax.plot(x, y, format_string, label=label, **kwargs)
+    return ax.plot(x, y, format_string, **kwargs)
 
 
 def _analemma_plot_sampling_times(
@@ -320,7 +323,7 @@ _season_format_strings = ["--b", "-g", "-.r", ":k"]
 
 
 def plot_analemma_season_segment(
-    ax,
+    ax: Axes,
     season: Season,
     hour_offset: float,
     planet: orbit.PlanetParameters,
@@ -345,16 +348,16 @@ def plot_analemma_season_segment(
         planet,
         dial,
         _season_format_strings[season.value],
-        label="",
         **kwargs,
     )
 
 
 def plot_analemma(
-    ax,
+    ax: "Axes",
     hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
+    format_string: str,
     **kwargs,
 ):
     """
@@ -376,6 +379,7 @@ def plot_analemma(
         times[ssda > 0],
         planet,
         dial,
+        format_string,
         **kwargs,
     )
 
@@ -403,7 +407,11 @@ _equinox_or_solstice_info = {
 
 
 def plot_special_sun_path(
-    ax, season: Season, planet: orbit.PlanetParameters, dial: DialParameters, **kwargs
+    ax: Axes,
+    season: Season,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+    **kwargs,
 ):
     """
     Plot the path of the sun across the dial on the equinox or solstice in the given season
@@ -535,7 +543,7 @@ def hour_offset_to_oclock(hour_offset: int):
 
 
 def annotate_analemma_with_hour(
-    ax, hour_offset: int, planet: orbit.PlanetParameters, dial: DialParameters
+    ax: Axes, hour_offset: int, planet: orbit.PlanetParameters, dial: DialParameters
 ):
     """
     For the given hour, annotate with the time

@@ -3,10 +3,16 @@ Implementation of formulae for calculating sundial geometry
 """
 
 import numpy as np
-from numpy import sin, cos
+from numpy import sin, cos, typing as npt
+from typing import Tuple
 
 
-def hour_angle_terms(alpha, sigma, psi, iota_minus_theta=np.nan):
+def hour_angle_terms(
+    alpha: npt.ArrayLike,
+    sigma: npt.ArrayLike,
+    psi: npt.ArrayLike,
+    iota_minus_theta: npt.ArrayLike = np.nan,
+) -> Tuple[np.array, np.array]:
     """
     Generalized hour angle of the sun measured as the angle between the gnomon and a sun ray
 
@@ -35,14 +41,26 @@ def hour_angle_terms(alpha, sigma, psi, iota_minus_theta=np.nan):
     return (sinXi_sin_mu, sinXi_cos_mu)
 
 
-def hour_angle(alpha, sigma, psi, iota_minus_theta=np.nan):
+def hour_angle(
+    alpha: npt.ArrayLike,
+    sigma: npt.ArrayLike,
+    psi: npt.ArrayLike,
+    iota_minus_theta: npt.ArrayLike = np.nan,
+) -> np.array:
     "Evaluate the inverse tangent of the sun's hour angle"
 
     sinXi_sin_mu, sinXi_cos_mu = hour_angle_terms(alpha, sigma, psi, iota_minus_theta)
     return np.arctan2(sinXi_sin_mu, sinXi_cos_mu)
 
 
-def shadow_denom(alpha, sigma, psi, theta, i, d):
+def shadow_denom(
+    alpha: npt.ArrayLike,
+    sigma: npt.ArrayLike,
+    psi: npt.ArrayLike,
+    theta: npt.ArrayLike,
+    i: npt.ArrayLike,
+    d: npt.ArrayLike,
+) -> np.array:
     "The denominator in the shadow coordinate expressions"
 
     sinXi_sin_mu_s, sinXi_cos_mu_s = hour_angle_terms(
@@ -54,7 +72,15 @@ def shadow_denom(alpha, sigma, psi, theta, i, d):
     ) + (sin(i) * sin(theta) * cos(d) + cos(i) * cos(theta)) * sin(alpha) * cos(sigma)
 
 
-def shadow_coords_xy(alpha, sigma, psi, iota, theta, i, d):
+def shadow_coords_xy(
+    alpha: npt.ArrayLike,
+    sigma: npt.ArrayLike,
+    psi: npt.ArrayLike,
+    iota: npt.ArrayLike,
+    theta: npt.ArrayLike,
+    i: npt.ArrayLike,
+    d: npt.ArrayLike,
+) -> np.array:
     """
     Calculate the x and y coordinates of the tip of the shadow in the frame embedded in the dial face
 

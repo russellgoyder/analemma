@@ -3,6 +3,7 @@ theme:
   name: material
   palette:
     scheme: slate
+  logo: img/analemma_logo.svg
 
 nav:
  - Home: 'index.md'

@@ -4,7 +4,7 @@ Implementation of formulae for calculating orbits
 
 import math
 import numpy as np
-from numpy import sin, cos
+from numpy import sin, cos, typing as npt
 from dataclasses import dataclass, field
 
 
@@ -87,7 +87,7 @@ def _kepler_params(planet: PlanetParameters = earth, e: float = None):
     return A, B, planet.Om, planet.T_y
 
 
-def orbital_time(s: np.array, planet: PlanetParameters = earth, e: float = None):
+def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
     """
     Calculate orbital time given time parameter, t(s)
 
@@ -119,7 +119,7 @@ Cache of interpolation data used when inverting the relationship between orbital
 """
 
 
-def spinor_time(t: np.array, planet: PlanetParameters = earth, e: float = None):
+def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
     """
     Invert t(s), the relationship of orbital time t with the parameter in the spinor
     treatment of the Kepler problem, s, to give s(t).
@@ -134,7 +134,7 @@ def spinor_time(t: np.array, planet: PlanetParameters = earth, e: float = None):
     return np.interp(t, _t_finegrained[k], _s_finegrained)
 
 
-def orbital_radius(s: np.array, planet: PlanetParameters = earth, e: float = None):
+def orbital_radius(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
     """
     Calculate orbital radial coordinate given spinor time parameter, r(s)
     """
@@ -142,7 +142,7 @@ def orbital_radius(s: np.array, planet: PlanetParameters = earth, e: float = Non
     return A**2 + B**2 + 2 * A * B * cos(2 * Om * s)
 
 
-def orbital_angle(s, planet: PlanetParameters = earth, e=None):
+def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth, e=None):
     """
     Calculate orbital angular coordinate given time parameter, phi(s)
     """
