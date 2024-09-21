@@ -10,6 +10,7 @@ nav:
  - Home: 'index.md'
  - Analemma Plots: 'sundial_plots.md'
  - The Equation of Time: 'equation_of_time.md'
+ - Orbit Analysis: 'orbit_analysis.md'
  - Sundial Calculations: 'sundial.md'
  - API Reference: 'api_reference.md'
  - Changelog: 'changelog.md'

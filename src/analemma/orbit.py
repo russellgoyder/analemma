@@ -56,6 +56,19 @@ class PlanetParameters:
         self.T_sd = self.N / (self.N + 1) * self.T_d
         self.Om = pi / self.T_y * self.a
 
+    def daily_noons(self) -> np.array:
+        """
+        Daily time samples in seconds from noon at perihelion
+        """
+        return self.T_d * np.arange(int(self.N))
+
+    def rotation_angle(self, t: npt.ArrayLike) -> npt.ArrayLike:
+        """
+        Angle of planetary rotation increases linearly with time, one complete revolution
+        after one siderial day, and an offset of rho
+        """
+        return np.mod(self.rho + self.om_sd * t, 2 * pi)
+
     @classmethod
     def earth(cls):
         """

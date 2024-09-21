@@ -2,5 +2,5 @@
 
 git checkout docs/sundial.ipynb
 rm -rf docs/*_files
-rm docs/sundial.md docs/equation_of_time.md docs/sundial_plots.md
-rm .DS_Store
+rm -f docs/sundial.md docs/equation_of_time.md docs/sundial_plots.md
+find . -name .DS_Store -delete
