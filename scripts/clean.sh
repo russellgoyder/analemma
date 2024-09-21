@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git checkout docs/sundial.ipynb
-rm -rf docs/*_files
-rm -f docs/sundial.md docs/equation_of_time.md docs/sundial_plots.md docs/orbit_analysis.md
+git checkout docs/nb/sundial.ipynb # undo scripts/dollar_dollar.py
+rm -rf docs/nb/*_files
+rm -f docs/nb/*.md
 find . -name .DS_Store -delete

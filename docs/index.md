@@ -28,7 +28,7 @@ ax.axis("equal")
 ap.plot_analemma(ax, earth, vertical_dial)
 ```
 
-See [Analemma Plots](sundial_plots.md) for complete examples.
+See [Analemma Plots](nb/sundial_plots.md) for complete examples.
 
 ## Background
 
@@ -36,17 +36,17 @@ The analemma is the path traced by the shadow on a sundial (or the sun in the sk
 
 The full derivation is reproduced here using [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) in Jupyter notebooks.
 
- * [Sundial Calculations](sundial.md) works in terms of several angles describing the sundial and its planet, two of which vary with time. $\sigma_t$ measures the progress of the planet around its orbit and $\psi_t$ measures the rotation of the planet on its axis.
- * [The Equation of Time](equation_of_time.md) relates $\sigma_t$ and $\psi_t$ to time by calculating the planet's orbit.
- * [Orbit Analysis](orbit_analysis.md) explores the properties of the Earth's orbit.
+ * [Sundial Calculations](nb/sundial.md) works in terms of several angles describing the sundial and its planet, two of which vary with time. $\sigma_t$ measures the progress of the planet around its orbit and $\psi_t$ measures the rotation of the planet on its axis.
+ * [The Equation of Time](nb/equation_of_time.md) relates $\sigma_t$ and $\psi_t$ to time by calculating the planet's orbit.
+ * [Orbit Analysis](nb/orbit_analysis.md) explores the properties of the Earth's orbit.
  
 
 The results of these derivations are implemented in two modules in the `analemma` package.  
 
- * [analemma.geometry][] implements the results from [Sundial Calculations](sundial.md)
- * [analemma.orbit][] implements the results from [The Equation of Time](equation_of_time.md)
+ * [analemma.geometry][] implements the results from [Sundial Calculations](nb/sundial.md)
+ * [analemma.orbit][] implements the results from [The Equation of Time](nb/equation_of_time.md)
 
-Finally, [analemma.plot][] provides functionality for plotting the analemma which is demonstrated in [Analemma Plots](sundial_plots.md).
+Finally, [analemma.plot][] provides functionality for plotting the analemma which is demonstrated in [Analemma Plots](nb/sundial_plots.md).
 
 ## Project Links
 
