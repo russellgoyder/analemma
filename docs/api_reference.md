@@ -5,6 +5,7 @@
 #### [geometry](#geometry)
 #### [orbit](#orbit)
 #### [plot](#plot)
+#### [algebra](#algebra)
 
 --------------------------------
 
@@ -19,3 +20,7 @@
 <a name="plot"></a>
 ## **Module: `plot`**
 ::: analemma.plot
+
+<a name="algebra"></a>
+## **Module: `algebra`**
+::: analemma.algebra

@@ -69,6 +69,11 @@ class PlanetParameters:
         """
         return np.mod(self.rho + self.om_sd * t, 2 * pi)
 
+    def __hash__(self):
+        # this is not as efficient as it could be but covers the
+        # common case of reuse of the same object for a given planet
+        return id(self)
+
     @classmethod
     def earth(cls):
         """
