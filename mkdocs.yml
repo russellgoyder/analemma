@@ -18,7 +18,19 @@ nav:
    - The Shadow Length: 'nb/shadow_length.md'
    - The Analemma: 'nb/analemma.md'
    - Entire Calc in One Giant Notebook Soon To Be Deleted: 'nb/sundial.md'
- - API Reference: 'api_reference.md'
+ - API Reference:
+   - geometry: 'ref/geometry_ref.md'
+   - orbit: 'ref/orbit_ref.md'
+   - plot: 'ref/plot_ref.md'
+   - algebra:
+     - algebra.frame: 'ref/frame_ref.md'
+     - algebra.util: 'ref/util_ref.md'
+     - algebra.render: 'ref/render_ref.md'
+     - algebra.result: 'ref/result_ref.md'
+   - tests:
+     - tests.test_geometry: 'ref/test_geometry_ref.md'
+     - tests.test_plot: 'ref/test_plot_ref.md'
+     - tests.test_results: 'ref/test_results_ref.md'
  - Changelog: 'changelog.md'
 
 markdown_extensions:
