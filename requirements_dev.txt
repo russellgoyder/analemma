@@ -13,5 +13,6 @@ twine
 ruff
 pytest
 pytest-xdist
+nbmake
 pre-commit
 -e .
