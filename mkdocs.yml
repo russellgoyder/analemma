@@ -11,7 +11,13 @@ nav:
  - Analemma Plots: 'nb/sundial_plots.md'
  - The Equation of Time: 'nb/equation_of_time.md'
  - Orbit Analysis: 'nb/orbit_analysis.md'
- - Sundial Calculations: 'nb/sundial.md'
+ - Deriving the Analemma:
+   - Setup and Definitions: 'nb/sundial_setup.md'
+   - Gnomon Declination: 'nb/nonzero_gnomon_declination.md'
+   - The Shadow Angle: 'nb/shadow_angle.md'
+   - The Shadow Length: 'nb/shadow_length.md'
+   - The Analemma: 'nb/analemma.md'
+   - Entire Calc in One Giant Notebook Soon To Be Deleted: 'nb/sundial.md'
  - API Reference: 'api_reference.md'
  - Changelog: 'changelog.md'
 
