@@ -12,5 +12,6 @@ build
 twine
 ruff
 pytest
+pytest-xdist
 pre-commit
 -e .

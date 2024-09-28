@@ -6,7 +6,7 @@ import sympy as sp
 from galgebra.printer import latex
 from IPython.display import Math
 from galgebra import mv
-from typing import Tuple
+from typing import Tuple, List
 
 
 def multivector(mv: mv.Mv) -> Math:
@@ -20,17 +20,33 @@ def multivector(mv: mv.Mv) -> Math:
     return Math(latex(mv))
 
 
-def frame(frame: Tuple[mv.Mv], symbol: str):
+def _extract_base_symbol(mv: mv.Mv) -> str:
+    # small hack. From https://github.com/pygae/galgebra/blob/master/galgebra/metric.py#L732
+    # it looks like we lose the character passed into galgebra.ga.Ga to denote the basis vectors
+    # but can extract it as follows if frame._space_algebra is used to form the GA
+    return str(mv.Ga.r_symbols[0]).split("_")[0]
+
+
+def _frame_lines(symbol: str, frame: Tuple[mv.Mv]) -> List[str]:
+    lines = []
+    for n, vec in enumerate(frame):
+        lines.append(f"{symbol}_{n} &= {latex(vec)}")
+    return lines
+
+
+def frame(symbol: str, frame: Tuple[mv.Mv]):
     """
     TODO
     """
-    return Math(rf"""
-            \begin{{align}}
-            {symbol}_1 &= {latex(frame[0])} \nonumber \\
-            {symbol}_2 &= {latex(frame[1])} \nonumber \\
-            {symbol}_3 &= {latex(frame[2])} \nonumber
-            \end{{align}}
-            """)
+
+    beginning = r"\begin{align} "
+
+    lines = _frame_lines(symbol, frame)
+    middle = r"\nonumber \\ ".join(lines)
+
+    end = r"\nonumber \end{align}"
+
+    return Math(beginning + middle + end)
 
 
 def expression(lhs: str, rhs: sp.Symbol) -> Math:
@@ -46,16 +62,90 @@ def expression(lhs: str, rhs: sp.Symbol) -> Math:
         """)
 
 
-def vector(lhs: sp.Symbol, vec: Tuple[mv.Mv], symbol="e", func=lambda x: x) -> Math:
+def expressions(lhss: Tuple[str], rhss: Tuple[sp.Symbol]) -> Math:
     """
     TODO
     """
-    # would like to use .Fmt(3) but having rendering issues
+    equations = []
+    for lhs, rhs in zip(lhss, rhss):
+        equations.append(
+            rf"""
+        \begin{{equation}}
+            {lhs} = {latex(rhs)} \nonumber
+        \end{{equation}}
+        """
+        )
+    return Math(r"\\".join(equations))
+
+
+def _vec_lines(vec: mv.Mv) -> List[str]:
+    symbol = _extract_base_symbol(vec)
     coeffs = vec.get_coefs(1)
-    return Math(rf"""
-            \begin{{align}}
-            {lhs} & = {latex(func(coeffs[0]))} {symbol}_1 \nonumber \\
-            & + {latex(func(coeffs[1]))} {symbol}_2 \nonumber \\
-            & + {latex(func(coeffs[2]))} {symbol}_3 \nonumber
-            \end{{align}}
-            """)
+    lines = []
+    for n, coeff in enumerate(coeffs):
+        lines.append(rf"\left({latex(coeff)}\right) {symbol}_{n+1}")
+    return lines
+
+
+def _bivec_lines(bivec: mv.Mv) -> List[str]:
+    symbol = _extract_base_symbol(bivec)
+    coeffs = bivec.get_coefs(2)
+    return [
+        rf"{latex(coeffs[0])} {symbol}_1 \wedge {symbol}_2",
+        rf"{latex(coeffs[1])} {symbol}_1 \wedge {symbol}_3",
+        rf"{latex(coeffs[2])} {symbol}_2 \wedge {symbol}_3",
+    ]
+
+
+def _lines(mv: mv.Mv) -> List[str]:
+    if len(mv.grades) != 1:
+        raise Exception(
+            f"Discovered a non-blade multivector when preparing to render, with grades {mv.grades}"
+        )
+    grade = mv.grades[0]
+    if grade == 1:
+        return _vec_lines(mv)
+    elif grade == 2:
+        return _bivec_lines(mv)
+    else:
+        raise Exception(
+            "Unsupported line rendering for pure-blade multivector of grade {grade}"
+        )
+
+
+def _beginning_string(lhs: sp.Symbol) -> str:
+    return rf"\begin{{align}} {lhs} & = "
+
+
+_middle_string: str = r" \nonumber \\ &"
+_end_string: str = r"& \nonumber \end{align}"
+
+
+def align(lhs: sp.Symbol, mv: mv.Mv, func=lambda x: x) -> Math:
+    """
+    TODO
+    """
+    return Math(_beginning_string(lhs) + _middle_string.join(_lines(mv)) + _end_string)
+
+
+def simplification(
+    lhs: str, stages: Tuple[mv.Mv], as_lines: Tuple[bool] = None
+) -> Math:
+    """
+    TODO
+    """
+
+    if as_lines is None:
+        as_lines = [False] * len(stages)
+
+    stage_middles = []
+    for do_lines, stage in zip(as_lines, stages):
+        if do_lines:
+            lines = _lines(stage)
+            stage_middles.append(_middle_string.join(lines))
+        else:
+            stage_middles.append(latex(stage))
+
+    middle = (_middle_string + " = ").join(stage_middles)
+
+    return Math(_beginning_string(lhs) + middle + _end_string)
