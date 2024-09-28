@@ -233,7 +233,7 @@ def shadow_coords_xy(
     y = -sin(Xi) * (
         (
             cos(mu) * sin(d) * cos(i)
-            + sin(mu) * (sin(i) * sin(iota) + sin(mu) * cos(d) * cos(i) * cos(iota))
+            + sin(mu) * (sin(i) * sin(iota) + cos(d) * cos(i) * cos(iota))
         )
         / D
     )
