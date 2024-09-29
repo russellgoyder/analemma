@@ -53,7 +53,7 @@ The analemma is the path traced by the shadow on a sundial (or the sun in the sk
 
  * [Setup and Definitions](nb/sundial_setup.md): geometry, location and orientation of the gnomon
    (shadow-casting stick) and face of the sundial.
- * [The Hour Angle](nb/nonzero_gnomon_declination.md): generalized formula for the solar hour angle, defined
+ * [The Hour Angle](nb/hour_angle.md): generalized formula for the solar hour angle, defined
    as the angle between the face of the dial and the plane containing the sun ray and the gnomon.
  * [The Shadow Angle](nb/shadow_angle.md): unit vector parallel to the shadow and how it moves in time
  * [The Shadow Length](nb/shadow_length.md): the length of the shadow

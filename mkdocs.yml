@@ -13,7 +13,7 @@ nav:
  - Orbit Analysis: 'nb/orbit_analysis.md'
  - Deriving the Analemma:
    - Setup and Definitions: 'nb/sundial_setup.md'
-   - Gnomon Declination: 'nb/nonzero_gnomon_declination.md'
+   - The Hour Angle: 'nb/hour_angle.md'
    - The Shadow Angle: 'nb/shadow_angle.md'
    - The Shadow Length: 'nb/shadow_length.md'
    - The Analemma: 'nb/analemma.md'
