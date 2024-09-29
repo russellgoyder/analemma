@@ -1,12 +1,12 @@
 """
-TODO
+Functionality for pretty-printing multivectors in Jupyter notebooks
 """
 
 import sympy as sp
 from galgebra.printer import latex
 from IPython.display import Math
 from galgebra import mv
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 
 
 def multivector(mv: mv.Mv) -> Math:
@@ -30,13 +30,28 @@ def _extract_base_symbol(mv: mv.Mv) -> str:
 def _frame_lines(symbol: str, frame: Tuple[mv.Mv]) -> List[str]:
     lines = []
     for n, vec in enumerate(frame):
-        lines.append(f"{symbol}_{n} &= {latex(vec)}")
+        lines.append(f"{symbol}_{n+1} &= {latex(vec)}")
     return lines
 
 
-def frame(symbol: str, frame: Tuple[mv.Mv]):
-    """
-    TODO
+def frame(symbol: str, frame: Tuple[mv.Mv]) -> Math:
+    r"""
+    Render a vector frame
+
+    For example,
+
+    $f_1 = \cos(\alpha)\cos(\psi) e_1 + \sin(\psi) e_2 + \sin(\alpha)\cos(\psi) e_3$
+
+    $f_2 = -\cos(\alpha)\sin(\psi) e_1 + \cos(\psi) e_2 - \sin(\alpha)\sin(\psi) e_3$
+
+    $f_3 = -\sin(\alpha) e_1 + \cos(\alpha) e_3$
+
+    Parameters:
+        symbol: Symbol to use for each vector in the frame
+        frame: Tuple of vectors to be rendered
+
+    Returns:
+        IPython.display.Math object holding the rendered LaTeX output
     """
 
     beginning = r"\begin{align} "
@@ -50,8 +65,19 @@ def frame(symbol: str, frame: Tuple[mv.Mv]):
 
 
 def expression(lhs: str, rhs: sp.Symbol) -> Math:
-    """
-    TODO
+    r"""
+    Render an expression
+
+    For example,
+
+    $f_1\wedge f_2 = \cos(\alpha) \, e_1 \wedge e_2 - \sin(\alpha) \, e_2 \wedge 3_3$
+
+    Parameters:
+        lhs: String to put on the left hand side of the rendered equality
+        rhs: Expression to be placed on the right hand side of the rendered equality
+
+    Returns:
+        IPython.display.Math object holding the rendered LaTeX output
     """
     # would like to use mv.Fmt but it seems to give LaTeX output which doesn't
     # render after eg jupyter nbconvert --to Markdown
@@ -64,7 +90,14 @@ def expression(lhs: str, rhs: sp.Symbol) -> Math:
 
 def expressions(lhss: Tuple[str], rhss: Tuple[sp.Symbol]) -> Math:
     """
-    TODO
+    Render multiple expressions
+
+    Parameters:
+        lhss: Tuple of strings to put on the left hand side of each rendered equality
+        rhss: Tuple of expressions to be placed on the right hand side of each rendered equality
+
+    Returns:
+        IPython.display.Math object holding the rendered LaTeX output
     """
     equations = []
     for lhs, rhs in zip(lhss, rhss):
@@ -121,9 +154,19 @@ _middle_string: str = r" \nonumber \\ &"
 _end_string: str = r"& \nonumber \end{align}"
 
 
-def align(lhs: sp.Symbol, mv: mv.Mv, func=lambda x: x) -> Math:
+def align(
+    lhs: sp.Symbol, mv: mv.Mv, func: Callable[[mv.Mv], mv.Mv] = lambda x: x
+) -> Math:
     """
-    TODO
+    Render a vector or a bivector with each component on a separate line
+
+    Parameters:
+        lhs: String to put on the left hand side of the rendered equality
+        mv: Multivector whose components are to be rendered on the right hand side, one per line
+        func: Manipulation to be performed on each coefficient of the given vector or bivector
+
+    Returns:
+        IPython.display.Math object holding the rendered LaTeX output
     """
     return Math(
         _beginning_string(lhs) + _middle_string.join(_lines(mv, func)) + _end_string
@@ -134,7 +177,15 @@ def simplification(
     lhs: str, stages: Tuple[mv.Mv], as_lines: Tuple[bool] = None
 ) -> Math:
     """
-    TODO
+    Render the simplification of a vector or a bivector
+
+    Parameters:
+        lhs: String to put on the left hand side of the rendered equality
+        stages: Tuple of equivalent multivectors in different forms
+        as_lines: Flag to indicate whether to render each stage in multiline format
+
+    Returns:
+        IPython.display.Math object holding the rendered LaTeX output
     """
 
     if as_lines is None:
