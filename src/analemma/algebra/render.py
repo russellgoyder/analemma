@@ -78,35 +78,35 @@ def expressions(lhss: Tuple[str], rhss: Tuple[sp.Symbol]) -> Math:
     return Math(r"\\".join(equations))
 
 
-def _vec_lines(vec: mv.Mv) -> List[str]:
+def _vec_lines(vec: mv.Mv, func=lambda x: x) -> List[str]:
     symbol = _extract_base_symbol(vec)
     coeffs = vec.get_coefs(1)
     lines = []
     for n, coeff in enumerate(coeffs):
-        lines.append(rf"\left({latex(coeff)}\right) {symbol}_{n+1}")
+        lines.append(rf"\left({latex(func(coeff))}\right) {symbol}_{n+1}")
     return lines
 
 
-def _bivec_lines(bivec: mv.Mv) -> List[str]:
+def _bivec_lines(bivec: mv.Mv, func=lambda x: x) -> List[str]:
     symbol = _extract_base_symbol(bivec)
     coeffs = bivec.get_coefs(2)
     return [
-        rf"{latex(coeffs[0])} {symbol}_1 \wedge {symbol}_2",
-        rf"{latex(coeffs[1])} {symbol}_1 \wedge {symbol}_3",
-        rf"{latex(coeffs[2])} {symbol}_2 \wedge {symbol}_3",
+        rf"{latex(func(coeffs[0]))} {symbol}_1 \wedge {symbol}_2",
+        rf"{latex(func(coeffs[1]))} {symbol}_1 \wedge {symbol}_3",
+        rf"{latex(func(coeffs[2]))} {symbol}_2 \wedge {symbol}_3",
     ]
 
 
-def _lines(mv: mv.Mv) -> List[str]:
+def _lines(mv: mv.Mv, func=lambda x: x) -> List[str]:
     if len(mv.grades) != 1:
         raise Exception(
             f"Discovered a non-blade multivector when preparing to render, with grades {mv.grades}"
         )
     grade = mv.grades[0]
     if grade == 1:
-        return _vec_lines(mv)
+        return _vec_lines(mv, func)
     elif grade == 2:
-        return _bivec_lines(mv)
+        return _bivec_lines(mv, func)
     else:
         raise Exception(
             "Unsupported line rendering for pure-blade multivector of grade {grade}"
@@ -125,7 +125,9 @@ def align(lhs: sp.Symbol, mv: mv.Mv, func=lambda x: x) -> Math:
     """
     TODO
     """
-    return Math(_beginning_string(lhs) + _middle_string.join(_lines(mv)) + _end_string)
+    return Math(
+        _beginning_string(lhs) + _middle_string.join(_lines(mv, func)) + _end_string
+    )
 
 
 def simplification(
