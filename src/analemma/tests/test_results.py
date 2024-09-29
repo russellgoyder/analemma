@@ -33,6 +33,63 @@ def test_dialface_orientation():
     )
 
 
+def test_shadow_bivector_magnitude():
+    r"""
+    TODO Check $S^2 = (s\wedge g)^2 = (s\cdot g)^2 - s^2 g^2$ where $s^2 = g^2 = 1$.
+
+    and
+
+    The magnitude of $S$ is given by $\sqrt{-S^2} = \sqrt{1 - (s\cdot g)^2} = \sqrt{1 - \cos^2(\Xi}) = \sin^2(\Xi)$:
+    """
+    s = frame.sunray()
+    g = frame.gnomon("e")
+    sg_squared = (s | g) * (s | g)
+
+    S = result.shadow_bivector(s, g)
+    S_norm_check = (S | S) - (sg_squared - 1)
+    assert S_norm_check.obj.equals(0)
+
+    sinXi = sp.sqrt(
+        1
+        - (
+            (cos(alpha) * cos(sigma) * cos(psi) + sin(sigma) * sin(psi))
+            * sin(iota - theta)
+            + sin(alpha) * cos(sigma) * cos(iota - theta)
+        )
+        ** 2
+    )
+    sg_check = sinXi**2 - (1 - sg_squared)
+    assert sg_check.obj.equals(0)
+
+
+def test_hour_angle_pythagoras_identity():
+    r"""
+    TODO Check that $\sin^2(\Xi)\sin^2(\mu) + \sin^2(\Xi)\cos^2(\mu) = \sin^2(\Xi)$
+    """
+
+    s = frame.sunray()
+    g = frame.gnomon("e")
+    S = result.shadow_bivector(s, g)
+
+    M = frame.meridian_plane()
+
+    sinXi_sin_mu, sinXi_cos_mu = result.hour_angle_sincos(S, M)
+
+    sinXi = sp.sqrt(
+        1
+        - (
+            (cos(alpha) * cos(sigma) * cos(psi) + sin(sigma) * sin(psi))
+            * sin(iota - theta)
+            + sin(alpha) * cos(sigma) * cos(iota - theta)
+        )
+        ** 2
+    )
+    Xi_check = sp.trigsimp(
+        sp.expand(sinXi_sin_mu**2) + sp.expand(sinXi_cos_mu**2) - sp.expand(sinXi**2)
+    )
+    assert Xi_check.equals(0)
+
+
 def test_shadow_plane_consistency():
     """
     TODO
@@ -43,10 +100,7 @@ def test_shadow_plane_consistency():
     )
 
     s = frame.sunray()
-    gn = frame.gnomon("n", zero_decl=True)
-    g = util.project_vector(
-        gn, target_frame=frame.base("n"), render_frame=frame.surface()
-    )
+    g = frame.gnomon("e")
     S = result.shadow_bivector(s, g)
 
     sinXi_sin_mu, sinXi_cos_mu = result.hour_angle_sincos(S, frame.meridian_plane())
@@ -113,7 +167,7 @@ def test_shadow_triangle_solution():
     assert sp.simplify(sp.denom(p_sympy) - denom_explicit).equals(0)
 
 
-def test_sincos_beta_pythagoras_identity():
+def test_beta_pythagoras_identity():
     """
     TODO
     """

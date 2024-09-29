@@ -184,6 +184,8 @@ def gnomon(
         return _gnomon(zero_decl, incl_symbol, decl_symbol)
     elif base_symbol == "e":
         gn = _gnomon(zero_decl, incl_symbol, decl_symbol)
-        return util.project_vector(gn, target_frame=base("n"), render_frame=surface())
+        return util.update_coeffs(
+            util.project_vector(gn, target_frame=base("n"), render_frame=surface())
+        )
     else:
         raise Exception("TODO")
