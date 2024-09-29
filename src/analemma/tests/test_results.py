@@ -1,7 +1,36 @@
 import sympy as sp
 from sympy import sin, cos
-from sympy.abc import mu, iota, theta, alpha, psi, sigma
+from sympy.abc import mu, iota, theta, alpha, psi, sigma, i, d
 from analemma.algebra import frame, util, result
+
+
+def test_3frame_orthonormality():
+    """
+    Ensure that each frame of three vectors is orthonormal
+    """
+
+    def _check_orthnormal(three_frame) -> None:
+        v1, v2, v3 = three_frame
+        # more elegant to ensure that the geometric product of the vectors is equal to the pseudoscalar:
+        # assert (v1*v2*v3).trigsimp().obj.equals((e1^e2^e3).obj)
+        # but this is significantly faster and equivalent
+        assert v1 | v1 == v2 | v2 == v3 | v3 == frame.scalar_element(1)
+        assert v1 | v2 == v1 | v3 == v2 | v3 == frame.scalar_element(0)
+
+    _check_orthnormal(frame.base("e"))
+
+
+def test_dialface_orientation():
+    """
+    TODO
+    """
+    Gn = frame.dialface()
+    # this is formed as m1^m2
+    # check that we get the same result by rotating n1^n2
+    nn1, nn2, nn3 = frame.base("n")
+    assert (
+        Gn == util.rotate(util.rotate(nn1 ^ nn2, i, nn1 ^ nn3), d, nn1 ^ nn2).trigsimp()
+    )
 
 
 def test_shadow_plane_consistency():
