@@ -1,7 +1,7 @@
 """
 Key vectors, bivectors, and frames defining the location, orientation and geometry of a sundial.
 
-See [Setup and Definitions](../nb/sundial_setup.md) to see the algebraic form taken by these objects.
+See [Setup and Definitions](../nb/sundial_setup.md) for the algebraic form taken by these objects.
 """
 
 import sympy as sp
