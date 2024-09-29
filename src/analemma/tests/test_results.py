@@ -129,6 +129,74 @@ def test_shadow_bivector_magnitude_angle_cos():
     assert sp.simplify(cosXi - should_be).equals(0)
 
 
+def test_shadowplane_dialface_angle():
+    """
+    TODO
+    """
+
+    # check (force sympy to give up the positive square root in each factor in the denominator)
+    def _norm(B):
+        return sp.powdenest(sp.sqrt(sp.trigsimp((-B | B).obj)), force=True)
+
+    Sn = result.shadow_bivector_explicit()
+    Gn = frame.dialface()
+    Xi = sp.Symbol(r"\Xi")
+    SuGu_check = sp.trigsimp((Sn | Gn).obj) / _norm(Sn) / _norm(Gn) - (Sn | Gn) / sin(
+        Xi
+    )
+    assert SuGu_check.obj.equals(0)
+
+
+def test_shadowplane_dialface_intersection_length():
+    """
+    TODO
+    """
+    Sn = result.shadow_bivector_explicit()
+    Gn = frame.dialface()
+    u = result.dialface_shadowbivector_intersection(Gn, Sn)
+    Xi = sp.Symbol(r"\Xi")
+    u2_check = (u | u) - (sin(Xi) ** 2 - (Sn | Gn) ** 2)
+    assert u2_check.obj.equals(0)
+
+
+def test_unit_shadow_normalization():
+    r"""
+    TODO
+
+    Check that
+
+    $$\hat{w}^2 = \left(\frac{u}{\sin(\Xi)\sin(\Psi)}\right)^2 = 1$$
+
+    by showing that
+
+    $$\frac{u^2}{\sin^2(\Xi)} - \sin^2\Psi = 0$$
+    """
+    Sn = result.shadow_bivector_explicit()
+    Gn = frame.dialface()
+    cosPsi = result.dialface_shadowbivector_angle_cos(Gn, Sn)
+    sinPsiSquared = 1 - sp.expand(cosPsi**2)
+    u = result.dialface_shadowbivector_intersection(Gn, Sn)
+    Xi = sp.Symbol(r"\Xi")
+    u_over_sinXi_squared = sp.trigsimp(((u | u) / sin(Xi) ** 2).obj)
+    what_check = sp.trigsimp(u_over_sinXi_squared - sinPsiSquared)
+    assert what_check.equals(0)
+
+
+def test_noon_shadow_angle_pythagoras_identity():
+    r"""
+    TODO
+    Check that $\sin^2(\zeta) + \cos^2(\zeta) = 1$
+    This is 1 if the numerator is equal to the denominator, and we have an explicit expression for $\cos(\Psi) = \sqrt{1 - \sin^2(\Psi)}$. So should get zero from the following:
+    """
+    Sn = result.shadow_bivector_explicit()
+    Gn = frame.dialface()
+    sin_zeta, cos_zeta = result.noon_angle_sincos(Gn, Sn)
+    cosPsi = result.dialface_shadowbivector_angle_cos(Gn, Sn)
+    term = sp.simplify(sp.expand(sp.trigsimp(sin_zeta.obj) ** 2 + cos_zeta**2))
+    zeta_check = sp.trigsimp(sp.numer(term) - (1 - cosPsi**2))
+    assert zeta_check.equals(0)
+
+
 def test_shadow_triangle_solution():
     """
     TODO
