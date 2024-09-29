@@ -17,7 +17,6 @@ nav:
    - The Shadow Angle: 'nb/shadow_angle.md'
    - The Shadow Length: 'nb/shadow_length.md'
    - The Analemma: 'nb/analemma.md'
-   - Entire Calc in One Giant Notebook Soon To Be Deleted: 'nb/sundial.md'
  - API Reference:
    - geometry: 'ref/geometry_ref.md'
    - orbit: 'ref/orbit_ref.md'
