@@ -1,11 +1,23 @@
 
 # Sundials, Orbits and Analemmas
 
-The `analemma` package performs sundial calculations, allowing for very general geometry that covers all common types of dial. Highlights include
+<style>
+  .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  }
+</style>
+
+<img width="300px" src="img/analemma_logo_dark_mode_red.svg" class="center"/>
+
+`analemma` performs sundial calculations, allowing for very general geometry that covers all common types of dial. Highlights include
 
  * exact parametric expressions for the analemma on any type of sundial
  * orbits and the equation of time for any planet
  * a plotting module to draw the analemma
+ * all results expressed numerically and in symbolic algebra
+ * all tests published within the package so you can read and run them
 
 ## Install
 
@@ -28,23 +40,25 @@ ax.axis("equal")
 ap.plot_analemma(ax, earth, vertical_dial)
 ```
 
-See [Analemma Plots](sundial_plots.md) for complete examples.
+See [Analemma Plots](nb/sundial_plots.md) for complete examples showing various analemmas.
+
+For the connection between the angle of the sun, the date, and the time, see [The Equation of
+Time](nb/equation_of_time.md) and [Orbit Analysis](nb/orbit_analysis.md).
 
 ## Background
 
 The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. In this package, the analemma is expressed in an exact parametric expression whose derivation was first presented in 2006. See the [project homepage](https://russellgoyder.github.io/sundial-latex/) for more information.
 
-The full derivation is reproduced here using [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) in two Jupyter notebooks.
+`analemma` uses [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) to encode and present the mathematics of the analemma in a series of notebooks:
 
- * [Sundial Calculations](sundial.md) works in terms of several angles describing the sundial and its planet, two of which vary with time. $\sigma_t$ measures the progress of the planet around its orbit and $\psi_t$ measures the rotation of the planet on its axis.
- * [The Equation of Time](equation_of_time.md) relates $\sigma_t$ and $\psi_t$ to time by calculating the planet's orbit.
+ * [Setup and Definitions](nb/sundial_setup.md): geometry, location and orientation of the gnomon
+   (shadow-casting stick) and face of the sundial.
+ * [The Hour Angle](nb/hour_angle.md): generalized formula for the solar hour angle, defined
+   as the angle between the face of the dial and the plane containing the sun ray and the gnomon.
+ * [The Shadow Angle](nb/shadow_angle.md): unit vector parallel to the shadow and how it moves in time
+ * [The Shadow Length](nb/shadow_length.md): the length of the shadow
+ * [The Analemma](nb/analemma.md): parametric expression for the analemma as the coordinates of the tip of a sundial's shadow
 
-The results of these derivations are implemented in two modules in the `analemma` package.  
-
- * [analemma.geometry][] implements the results from [Sundial Calculations](sundial.md)
- * [analemma.orbit][] implements the results from [The Equation of Time](equation_of_time.md)
-
-Finally, [analemma.plot][] provides functionality for plotting the analemma which is demonstrated in [Analemma Plots](sundial_plots.md).
 
 ## Project Links
 

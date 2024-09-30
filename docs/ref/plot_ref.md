@@ -1,0 +1,4 @@
+
+# plot
+
+::: analemma.plot

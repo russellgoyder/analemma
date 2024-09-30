@@ -3,14 +3,33 @@ theme:
   name: material
   palette:
     scheme: slate
-  logo: img/analemma_logo.svg
+  logo: img/analemma_logo_dark_mode_red.svg
+  favicon: img/analemma_favicon.svg
 
 nav:
  - Home: 'index.md'
- - Analemma Plots: 'sundial_plots.md'
- - The Equation of Time: 'equation_of_time.md'
- - Sundial Calculations: 'sundial.md'
- - API Reference: 'api_reference.md'
+ - Analemma Plots: 'nb/sundial_plots.md'
+ - The Equation of Time: 'nb/equation_of_time.md'
+ - Orbit Analysis: 'nb/orbit_analysis.md'
+ - Deriving the Analemma:
+   - Setup and Definitions: 'nb/sundial_setup.md'
+   - The Hour Angle: 'nb/hour_angle.md'
+   - The Shadow Angle: 'nb/shadow_angle.md'
+   - The Shadow Length: 'nb/shadow_length.md'
+   - The Analemma: 'nb/analemma.md'
+ - API Reference:
+   - geometry: 'ref/geometry_ref.md'
+   - orbit: 'ref/orbit_ref.md'
+   - plot: 'ref/plot_ref.md'
+   - algebra:
+     - algebra.frame: 'ref/frame_ref.md'
+     - algebra.util: 'ref/util_ref.md'
+     - algebra.render: 'ref/render_ref.md'
+     - algebra.result: 'ref/result_ref.md'
+   - tests:
+     - tests.test_geometry: 'ref/test_geometry_ref.md'
+     - tests.test_plot: 'ref/test_plot_ref.md'
+     - tests.test_results: 'ref/test_results_ref.md'
  - Changelog: 'changelog.md'
 
 markdown_extensions:

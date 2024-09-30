@@ -278,7 +278,7 @@ def _plot_analemma_segment(
     times: np.array,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
-    format_string: str,
+    format_string: str = "",
     **kwargs,
 ):
     x, y = _calc_analemma_points(times, planet, dial)
@@ -328,6 +328,7 @@ def plot_analemma_season_segment(
     hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
+    format_string: str = "",
     **kwargs,
 ):
     """
@@ -357,7 +358,7 @@ def plot_analemma(
     hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
-    format_string: str,
+    format_string: str = "",
     **kwargs,
 ):
     """
