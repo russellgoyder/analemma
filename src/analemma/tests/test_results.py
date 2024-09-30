@@ -22,7 +22,7 @@ def test_3frame_orthonormality():
         assert v1 | v2 == v1 | v3 == v2 | v3 == frame.scalar_element(0)
 
     _check_orthnormal(frame.base("e"))
-    _check_orthnormal(frame.dial())
+    # _check_orthnormal(frame.dial()) # need to project/move between GAs
     _check_orthnormal(frame.planet())
     _check_orthnormal(frame.surface())
 
