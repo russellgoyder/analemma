@@ -1,5 +1,3 @@
 """
-The test suite for the Analemma package
-
-TODO blurb
+The test suite for `analemma`
 """

@@ -1,3 +1,7 @@
+"""
+Tests relating to content of [algebra.result](result_ref.md)
+"""
+
 import sympy as sp
 from sympy import sin, cos
 from sympy.abc import mu, iota, theta, alpha, psi, sigma, i, d
@@ -18,11 +22,19 @@ def test_3frame_orthonormality():
         assert v1 | v2 == v1 | v3 == v2 | v3 == frame.scalar_element(0)
 
     _check_orthnormal(frame.base("e"))
+    _check_orthnormal(frame.dial())
+    _check_orthnormal(frame.planet())
+    _check_orthnormal(frame.surface())
 
 
 def test_dialface_orientation():
-    """
-    TODO
+    r"""
+    Ensure that the dial face formed from rotated vectors matches the corresponding rotated surface bivector
+
+    The dial face $G$ is formed as $m_1\wedge m_2$ in [analemma.algebra.frame.dialface][]. Check that this
+    is consistent with $R n_1 \wedge n_2 \tilde{R}$ where
+
+    $R = \exp(-n_1\wedge n_2\frac{1}{2}d) \, \exp(-n_1\wedge n_3\frac{1}{2}i)$
     """
     Gn = frame.dialface()
     # this is formed as m1^m2
@@ -35,11 +47,13 @@ def test_dialface_orientation():
 
 def test_shadow_bivector_magnitude():
     r"""
-    TODO Check $S^2 = (s\wedge g)^2 = (s\cdot g)^2 - s^2 g^2$ where $s^2 = g^2 = 1$.
+    Checks related to the magnitude of $S^2$.
 
-    and
+    Check that $S^2 = (s\wedge g)^2 = (s\cdot g)^2 - s^2 g^2$ where $s^2 = g^2 = 1$
 
-    The magnitude of $S$ is given by $\sqrt{-S^2} = \sqrt{1 - (s\cdot g)^2} = \sqrt{1 - \cos^2(\Xi}) = \sin^2(\Xi)$:
+    and ensure that
+
+    $\sqrt{-S^2} = \sqrt{1 - (s\cdot g)^2} = \sqrt{1 - \cos^2(\Xi}) = \sin(\Xi)$
     """
     s = frame.sunray()
     g = frame.gnomon("e")
@@ -64,7 +78,7 @@ def test_shadow_bivector_magnitude():
 
 def test_hour_angle_pythagoras_identity():
     r"""
-    TODO Check that $\sin^2(\Xi)\sin^2(\mu) + \sin^2(\Xi)\cos^2(\mu) = \sin^2(\Xi)$
+    Check that $\sin^2(\Xi)\sin^2(\mu) + \sin^2(\Xi)\cos^2(\mu) = \sin^2(\Xi)$
     """
 
     s = frame.sunray()
@@ -91,8 +105,11 @@ def test_hour_angle_pythagoras_identity():
 
 
 def test_shadow_plane_consistency():
-    """
-    TODO
+    r"""
+    Compare two forms of the shadow plane $S$
+
+    Ensure that the [explicit form][analemma.algebra.result.shadow_bivector_explicit]
+    is equal to the [form derived as $s \wedge g$][analemma.algebra.result.shadow_bivector].
     """
     S_explicit = result.shadow_bivector_explicit()
     on_e_bivecs = util.project_bivector(
@@ -113,8 +130,10 @@ def test_shadow_plane_consistency():
 
 
 def test_shadow_bivector_magnitude_angle_cos():
-    """
-    TODO
+    r"""
+    Compare two different ways of calculating $\cos(\Xi)$
+
+    Ensure that $s\cdot g$ as computed via symbolic is equal to an independent derivation
     """
 
     s = frame.sunray()
@@ -130,8 +149,12 @@ def test_shadow_bivector_magnitude_angle_cos():
 
 
 def test_shadowplane_dialface_angle():
-    """
-    TODO
+    r"""
+    Compare two ways of calculating $\cos(\Psi)$
+
+    Ensure that
+
+    $\frac{S\cdot G}{\sqrt{-S^2}\sqrt{-G^2}} = \frac{S\cdot G}{\sin(\Xi)}$
     """
 
     # check (force sympy to give up the positive square root in each factor in the denominator)
@@ -148,8 +171,10 @@ def test_shadowplane_dialface_angle():
 
 
 def test_shadowplane_dialface_intersection_length():
-    """
-    TODO
+    r"""
+    A check on the length of $u$, the vector formed as the intersection of shadow bivector and dial face
+
+    Ensure that $u^2 = \sin^2(\Xi) - (S\cdot G)^2$
     """
     Sn = result.shadow_bivector_explicit()
     Gn = frame.dialface()
@@ -161,15 +186,15 @@ def test_shadowplane_dialface_intersection_length():
 
 def test_unit_shadow_normalization():
     r"""
-    TODO
+    Check the normalization of $u$, the vector formed as the intersection of shadow bivector and dial face
 
     Check that
 
-    $$\hat{w}^2 = \left(\frac{u}{\sin(\Xi)\sin(\Psi)}\right)^2 = 1$$
+    $\hat{w}^2 = \left(\frac{u}{\sin(\Xi)\sin(\Psi)}\right)^2 = 1$
 
     by showing that
 
-    $$\frac{u^2}{\sin^2(\Xi)} - \sin^2\Psi = 0$$
+    $\frac{u^2}{\sin^2(\Xi)} - \sin^2\Psi = 0$
     """
     Sn = result.shadow_bivector_explicit()
     Gn = frame.dialface()
@@ -184,9 +209,10 @@ def test_unit_shadow_normalization():
 
 def test_noon_shadow_angle_pythagoras_identity():
     r"""
-    TODO
-    Check that $\sin^2(\zeta) + \cos^2(\zeta) = 1$
-    This is 1 if the numerator is equal to the denominator, and we have an explicit expression for $\cos(\Psi) = \sqrt{1 - \sin^2(\Psi)}$. So should get zero from the following:
+    Check that the expressions for $\sin(\zeta)$ and $\cos(\zeta)$ obey the Pythagorean identity
+
+    We have $\sin^2(\zeta) + \cos^2(\zeta) = 1$ if the numerator of the left hand side is equal to the denominator,
+    and we have an explicit expression for $\cos(\Psi) = \sqrt{1 - \sin^2(\Psi)}$.
     """
     Sn = result.shadow_bivector_explicit()
     Gn = frame.dialface()
@@ -198,8 +224,8 @@ def test_noon_shadow_angle_pythagoras_identity():
 
 
 def test_shadow_triangle_solution():
-    """
-    TODO
+    r"""
+    Check that the shadow triangle solution $\lambda$ solves the problem $g + \lambda s = 0$
     """
     Gn = frame.dialface()
     G = util.project_bivector(Gn, frame.base_bivec("n"), frame.surface_bivec())
@@ -236,8 +262,8 @@ def test_shadow_triangle_solution():
 
 
 def test_beta_pythagoras_identity():
-    """
-    TODO
+    r"""
+    Check that the expressions for $\sin(\beta)$ and $\cos(\beta)$ obey the Pythagorean identity
     """
     sin_beta, cos_beta = result.gnomon_shadow_angle_sincos()
 
@@ -253,7 +279,7 @@ def test_beta_pythagoras_identity():
 
 def test_sunray_shadow_projection():
     r"""
-    TODO Check that $p + \cos(\Xi)$ is equal to the projection of $w$ onto $s$
+    Check that $\lambda + \cos(\Xi)$ is equal to the projection of $w$ onto $s$
     """
 
     gn = frame.gnomon("n", zero_decl=True)
@@ -274,7 +300,7 @@ def test_sunray_shadow_projection():
 
 def test_gnomon_shadow_projection():
     r"""
-    TODO check that $1 + p\cos(\Xi)$ is equal to the projection of $w$ onto $g$
+    Check that $1 + \lambda\cos(\Xi)$ is equal to the projection of $w$ onto $g$
     """
 
     # TODO fixtures
