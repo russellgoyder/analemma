@@ -78,6 +78,7 @@ jobs:
     name: Build distribution 📦
     needs:
     - test
+    - test-notebooks
     - ruff
     runs-on: ubuntu-latest
 
