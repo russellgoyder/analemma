@@ -325,7 +325,7 @@ def test_gnomon_dialface_angle_pythagoras_identity():
     r"""
     [analemma.algebra.result.gnomon_dialface_angle_sin][] gives $\sin(A)$, the between the gnomon and the subgnomon (or,
     equivalently, the dial face). The subgnomon $b$ has length $\cos(A)$, and this test ensures that $b^2 = 1 -
-    sin^2(A)$.
+    \sin^2(A)$.
     """
     sinA = result.gnomon_dialface_angle_sin()
 

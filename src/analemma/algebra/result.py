@@ -581,26 +581,26 @@ def gnomon_dialface_angle_sin(
     r"""
     The sine of the angle between the gnomon and the dial face
 
-    In Rohr's 1996 book "SUNDIALS History, Theory and Practice", he refers to the substyle, which is the projection of
+    In Rohr's 1996 book *SUNDIALS History, Theory and Practice*, he refers to the substyle, which is the projection of
     the style onto the dial face. Here, we allow the gnomon to have an independent inclination $\iota$ which matches a
-    style when $\iota = \theta$, the ($90^\circ minus) latitude angle.
+    style when $\iota = \theta$, the ($90^\circ$ minus) latitude angle.
 
     We can readily project the gnomon $g$ onto the dial face $G$. The vector $\bar{b} = g\cdot G$ is parallel to $G$ (ie
     lies in the dial face) and is rotated with the orientation of $G$ (anticlockwise as seen from above the dial) by
-    $\pi/2$ relative to the subgnomon $b = R \bar{b} \tilde{$}$ where $R = \exp(\pi/4 \, G)$ undoes that $90^\circ$
+    $\pi/2$ relative to the subgnomon $b = R \bar{b} \tilde{R}$ where $R = \exp(\frac{\pi}{4} \, G)$ undoes that $90^\circ$
     rotation (notice the angle in $R$ is positive in contrast to typical [rotations][analemma.algebra.util.rotate]).
 
-    Let $A$ denote the angle between the angle between the gnomon $g$ (unit length) and the subgnomon $b$ (or
-    equivalently the dial face $G$). Then, $\cos(A) = \sqrt(b^2)$, and $1-\cos^2(A)$ factorizes nicely to give $\sin(A)$
+    Let $A$ denote the angle between the (unit length) gnomon $g$ and the subgnomon $b$ (or
+    equivalently the dial face $G$). Then, $\cos(A) = \sqrt{b^2}$, and $1-\cos^2(A)$ factorizes nicely to give $\sin(A)$
     as returned by this function.
 
     See also [Comparison with Rohr's Book](../nb/rohr_comparison.md) and
     [analemma.tests.test_results.test_gnomon_dialface_angle_pythagoras_identity][].
 
     Parameters:
-        dial_incl_symbol: The inclination angle of the dial face relative to the surface frame dial_decl_symbol: The
-        declination angle of the dial face relative to the surface frame gnomon_incl_symbol: The inclination angle of
-        the gnomon relative to the surface frame
+        dial_incl_symbol: The inclination angle of the dial face relative to the surface frame
+        dial_decl_symbol: The declination angle of the dial face relative to the surface frame
+        gnomon_incl_symbol: The inclination angle of the gnomon relative to the surface frame
 
     Returns:
         $\sin(A)$, the angle between gnomon and subgnomon (or, equivalently, the dial face)
