@@ -319,3 +319,24 @@ def test_gnomon_shadow_projection():
     wn = gn + p * sn
     wg_check = (gn | wn) - (1 + p * cosXi)
     assert wg_check.obj.equals(0)
+
+
+def test_gnomon_dialface_angle_pythagoras_identity():
+    r"""
+    [analemma.algebra.result.gnomon_dialface_angle_sin][] gives $\sin(A)$, the between the gnomon and the subgnomon (or,
+    equivalently, the dial face). The subgnomon $b$ has length $\cos(A)$, and this test ensures that $b^2 = 1 -
+    sin^2(A)$.
+    """
+    sinA = result.gnomon_dialface_angle_sin()
+
+    gn = frame.gnomon()
+
+    Gn = frame.dialface()
+    bn = util.update_coeffs(
+        util.rotate(gn | Gn, -sp.pi / 2, Gn).trigsimp()
+    )  # subgnomon on n-basis (surface frame)
+    bm = util.project_vector(
+        bn, frame.dial(), frame.base("m")
+    )  # project onto m-basis (dial frame)
+
+    assert sp.trigsimp(sp.expand_trig((bm | bm).obj) - (1 - sinA**2)).equals(0)

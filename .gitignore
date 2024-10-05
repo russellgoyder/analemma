@@ -128,7 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# old MATLAB version of plots for reference
+# original Maple and MATLAB code for reference
+.maple_archive
 .matlab_archive
 .octave
 
