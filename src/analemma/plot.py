@@ -8,7 +8,7 @@ from scipy import optimize as sci_opt
 from dataclasses import dataclass
 import datetime
 from enum import Enum
-from typing import TypeVar
+from typing import TypeVar, Tuple
 from analemma import geometry, orbit
 
 
@@ -36,7 +36,7 @@ class DialParameters:
     x_length: float = 10  # gnomon has unit length
     y_length: float = 10
 
-    def trim_coords(self, x: np.array, y: np.array):
+    def trim_coords(self, x: np.array, y: np.array) -> Tuple[np.array, np.array]:
         """
         Set points falling outside the dial face to nan so they don't show up when plotted
 
@@ -50,7 +50,19 @@ class DialParameters:
                 [coord if np.abs(coord) < dial_length else np.nan for coord in vec]
             )
 
-        return (dial_trim(x, self.x_length), dial_trim(y, self.y_length))
+        return dial_trim(x, self.x_length), dial_trim(y, self.y_length)
+
+    def within_face(self, x: np.array, y: np.array):
+        """
+        TODO
+        """
+
+        def _within_dialface(vec, dial_length):
+            return np.array(
+                [True if np.abs(coord) < dial_length else False for coord in vec]
+            )
+
+        return _within_dialface(x, self.x_length) & _within_dialface(y, self.y_length)
 
 
 def _psi(t, planet):
@@ -217,13 +229,24 @@ def orbit_date_to_day(the_date: datetime.date, year=2024) -> int:
     return (the_date - perihelion_date).days
 
 
+def sunray_dialface_angle(
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+    orbit_day: int,
+    hour_offset: float = 0.0,
+):
+    time = float(planet.T_d * orbit_day)
+    time += hour_offset * 3600
+    return sin_sunray_dialface_angle(time, planet, dial)
+
+
 def sunray_dialface_angle_over_one_year(
     planet: orbit.PlanetParameters, dial: DialParameters, hour_offset: float = 0.0
 ):
     """
     Calculate daily the time since perihelion in seconds and the corresponding sin(sunray-dialface angle)
     """
-    times = planet.T_d * np.arange(0, 365)
+    times = np.array([float(t) for t in planet.T_d * np.arange(0, 365)])
     times += hour_offset * 3600
     sines = np.array(sin_sunray_dialface_angle(times, planet, dial))
     return (times, sines)
@@ -254,20 +277,26 @@ class Season(Enum):
     Autumn = 3
 
 
-def _calc_analemma_points(
+def _calc_raw_analemma_points(
     t: np.array, planet: orbit.PlanetParameters, dial: DialParameters
 ):
     psis = _psi(t, planet)
     sigmas = _sigma(t, planet)
-    x_raw, y_raw = geometry.shadow_coords_xy(
+    x, y = geometry.shadow_coords_xy(
         planet.alpha, sigmas, psis, dial.iota, dial.theta, dial.i, dial.d
     )
-    x, y = dial.trim_coords(x_raw, y_raw)
     # when i == d == 0, the x axis (m1) points South and the y axis (m2) points East
     # more natural to rotate clockwise by pi/2 so that x points East and y points North
     xx = y
     yy = -x
-    return xx, yy
+    return xx, yy, dial.within_face(xx, yy)
+
+
+def _calc_analemma_points(
+    t: np.array, planet: orbit.PlanetParameters, dial: DialParameters, trim: bool = True
+):
+    x, y, _ = _calc_raw_analemma_points(t, planet, dial)
+    return dial.trim_coords(x, y) if trim else (x, y)
 
 
 Axes = TypeVar("matplotlib.axes.Axes")
@@ -328,7 +357,6 @@ def plot_analemma_season_segment(
     hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
-    format_string: str = "",
     **kwargs,
 ):
     """
@@ -343,6 +371,8 @@ def plot_analemma_season_segment(
     """
 
     times = _analemma_plot_sampling_times(season, hour_offset, planet, dial)
+    if times.size == 0:
+        return ax
     return _plot_analemma_segment(
         ax,
         times,
@@ -354,7 +384,7 @@ def plot_analemma_season_segment(
 
 
 def plot_analemma(
-    ax: "Axes",
+    ax: Axes,
     hour_offset: float,
     planet: orbit.PlanetParameters,
     dial: DialParameters,
@@ -407,6 +437,29 @@ _equinox_or_solstice_info = {
 }
 
 
+class DayType(Enum):
+    SunNeverRises = 0
+    SunNeverSets = 1
+    SunRisesAndSets = 2
+
+
+def _determine_day_type(
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+    orbit_day: int,
+):
+    hour_offsets = np.arange(-12, 12)
+    sines = np.array(
+        [sunray_dialface_angle(planet, dial, orbit_day, hour) for hour in hour_offsets]
+    )
+    if np.all(sines < 0):
+        return DayType.SunNeverRises
+    elif np.all(sines >= 0):
+        return DayType.SunNeverSets
+    else:
+        return DayType.SunRisesAndSets
+
+
 def plot_special_sun_path(
     ax: Axes,
     season: Season,
@@ -418,14 +471,29 @@ def plot_special_sun_path(
     Plot the path of the sun across the dial on the equinox or solstice in the given season
     """
 
+    num_times = 1000
+
     orbit_day = orbit_date_to_day(_equinox_or_solstice_info[season.value].date)
-    sun_times = find_sun_rise_noon_set_relative_to_dial_face(orbit_day, planet, dial)
+    day_type = _determine_day_type(planet, dial, orbit_day)
+    if day_type == DayType.SunNeverRises:
+        return []
+    elif day_type == DayType.SunNeverSets:
+        start_seconds = planet.T_d * orbit_day
+        finish_seconds = start_seconds + planet.T_d
+        times = np.linspace(start_seconds, finish_seconds, num_times)
+    elif day_type == DayType.SunRisesAndSets:
+        sun_times = find_sun_rise_noon_set_relative_to_dial_face(
+            orbit_day, planet, dial
+        )
+        buffer_seconds = 0.1 * 3600
+        start_seconds = sun_times.sunrise.absolute_seconds + buffer_seconds
+        finish_seconds = sun_times.sunset.absolute_seconds - buffer_seconds
+        times = np.linspace(start_seconds, finish_seconds, num_times)
+    else:
+        raise Exception(
+            f"Edge case encountered while plotting solstice or equinox for season {season}"
+        )
 
-    buffer_seconds = 0.1 * 3600
-    start_seconds = sun_times.sunrise.absolute_seconds + buffer_seconds
-    finish_seconds = sun_times.sunset.absolute_seconds - buffer_seconds
-
-    times = np.linspace(start_seconds, finish_seconds, 1000)
     psis = _psi(times, planet)
 
     sigma = _equinox_or_solstice_info[season.value].sigma
@@ -444,6 +512,86 @@ def plot_special_sun_path(
     )
 
 
+def plot_sunrise_sunset(
+    ax: Axes,
+    date: datetime.date,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+):
+    """
+    TODO
+    """
+    orbit_day = orbit_date_to_day(date)
+    day_type = _determine_day_type(planet, dial, orbit_day)
+    if not day_type == DayType.SunRisesAndSets:
+        raise Exception(
+            f"Sunrise and sunset events not detected at latitude {pi - dial.theta} on date {date}"
+        )
+
+    st = find_sun_rise_noon_set_relative_to_dial_face(orbit_day, planet, dial)
+
+    times = st.sample_times_for_one_day()
+    abs_seconds = np.array([st.absolute_seconds for st in times])
+    sines = sin_sunray_dialface_angle(abs_seconds, planet, dial)
+
+    ax.plot([st.hours_from_midnight for st in times], sines)
+    ax.plot(
+        st.sunrise.hours_from_midnight,
+        sin_sunray_dialface_angle(st.sunrise.absolute_seconds, planet, dial),
+        "sr",
+        label="Sunrise",
+    )
+    ax.plot(
+        st.noon.hours_from_midnight,
+        sin_sunray_dialface_angle(st.noon.absolute_seconds, planet, dial),
+        "og",
+        label="Noon",
+    )
+    ax.plot(
+        st.sunset.hours_from_midnight,
+        sin_sunray_dialface_angle(st.sunset.absolute_seconds, planet, dial),
+        "Db",
+        label="Sunset",
+    )
+
+    ax.grid()
+    ax.set_xlabel("Time in hours since midnight")
+    ax.set_ylabel("Sine of sunray-dialface angle")
+    ax.set_title(f"Key sundial events on {date}")
+    ax.legend()
+
+
+def plot_annual_sunray_dialface_angle(
+    ax1: Axes,
+    ax2: Axes,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+):
+    """
+    TODO
+    """
+
+    def _accentuate_x_axis(ax):
+        ax.plot([0, 365], [0, 0], "k")
+
+    def _plot_sunray_dialface_angle(
+        ax, begin_hour, end_hour, planet: orbit.PlanetParameters, dial: DialParameters
+    ):
+        for hour_offset in np.arange(begin_hour, end_hour):
+            times, sines = sunray_dialface_angle_over_one_year(
+                planet, dial, hour_offset
+            )
+            ax.plot(times / 3600 / 24, sines, label=hour_offset_to_oclock(hour_offset))
+        _accentuate_x_axis(ax)
+        ax.grid()
+        ax.legend()
+        ax.set_xlabel("Days since perihelion")
+
+    _plot_sunray_dialface_angle(ax1, -12, 0, planet, dial)
+    ax1.set_ylabel("Sine of sunray-dialface angle")
+    _plot_sunray_dialface_angle(ax2, 0, 12, planet, dial)
+
+
 def _analemma_point_coordinates(
     days_since_perihelion: int,
     hour_offset: float,
@@ -451,9 +599,9 @@ def _analemma_point_coordinates(
     dial: DialParameters,
 ):
     solstice_time = np.array([planet.T_d * days_since_perihelion + hour_offset * 3600])
-    if sin_sunray_dialface_angle(solstice_time, planet, dial) < 0:
-        return np.nan, np.nan
-    return _calc_analemma_points(solstice_time, planet, dial)
+    above_dial_plane = sin_sunray_dialface_angle(solstice_time, planet, dial) > 0
+    x, y, on_dial = _calc_raw_analemma_points(solstice_time, planet, dial)
+    return x, y, on_dial, above_dial_plane
 
 
 _sun_times_cache = {}
@@ -471,7 +619,10 @@ def _get_sun_times(planet: orbit.PlanetParameters, dial: DialParameters):
     return _sun_times_cache[key]
 
 
-def _solstice_days(planet: orbit.PlanetParameters, dial: DialParameters):
+def longest_and_shortest_days(planet: orbit.PlanetParameters, dial: DialParameters):
+    """
+    TODO
+    """
     sun_times = _get_sun_times(planet, dial)
     day_lengths = [
         st.sunset.hours_from_midnight - st.sunrise.hours_from_midnight
@@ -480,18 +631,69 @@ def _solstice_days(planet: orbit.PlanetParameters, dial: DialParameters):
     return (np.argmax(day_lengths), np.argmin(day_lengths))
 
 
-def _displace_point_along_hour_line(p, away_from_origin):
-    L = np.sqrt(p[0] ** 2 + p[1] ** 2)
-    direction_factor = 1 if away_from_origin else -1
-    factor = 1.5 * direction_factor
-    u = (factor * p[0] / L, factor * p[1] / L)
-    return (p[0] + u[0], p[1] + u[1])
+def _solstice_days(planet: orbit.PlanetParameters, dial: DialParameters):
+    _, sines = sunray_dialface_angle_over_one_year(planet, dial)
+    return (np.argmax(sines), np.argmin(sines))
 
 
-def _furthest_point(p1, p2):
+def _point_and_text_coords(j, d, label_point, above_dial_plane):
+    j_above_dial_plane, d_above_dial_plane = above_dial_plane
+    if label_point == WhichSolstice.June:
+        p = j
+        q = d
+        f = 1.0 if d_above_dial_plane else -1.0
+    elif label_point == WhichSolstice.December:
+        p = d
+        q = j
+        f = 1.0 if j_above_dial_plane else -1.0
+    else:
+        raise Exception(
+            "Logical inconsistency: Solstice label point must either \
+                        be June or December"
+        )
+
+    u = ((p[0] - q[0]), (p[1] - q[1]))
+    L = np.sqrt(u[0] ** 2 + u[1] ** 2)
+    u /= L
+    u *= 0.75 * f
+
+    return p, (p[0] + u[0], p[1] + u[1])
+
+
+class WhichSolstice(Enum):
+    June = 0
+    December = 1
+
+
+def _first_point_is_furthest(p1, p2):
     d1 = np.sqrt(p1[0] ** 2 + p1[1] ** 2)
     d2 = np.sqrt(p2[0] ** 2 + p2[1] ** 2)
-    return p1 if d1 > d2 else p2
+    return d1 > d2
+
+
+def _label_point(
+    june_point,
+    dec_point,
+    june_solstice_falls_on_dial: bool,
+    december_solstice_falls_on_dial: bool,
+):
+    if june_solstice_falls_on_dial and december_solstice_falls_on_dial:
+        val = (
+            WhichSolstice.June
+            if _first_point_is_furthest(june_point, dec_point)
+            else WhichSolstice.December
+        )
+        return val
+    elif june_solstice_falls_on_dial and not december_solstice_falls_on_dial:
+        return WhichSolstice.June
+    elif december_solstice_falls_on_dial and not june_solstice_falls_on_dial:
+        return WhichSolstice.December
+    else:
+        raise Exception(
+            f"Logical inconsistency encountered while determining label point with \
+                June coords {june_point}, December coords {dec_point}, and J/D falling on \
+                    dial: {june_solstice_falls_on_dial}/{december_solstice_falls_on_dial}"
+        )
 
 
 def _analemma_label_coordinates(
@@ -499,30 +701,26 @@ def _analemma_label_coordinates(
 ):
     june_solstice_day, december_solstice_day = _solstice_days(planet, dial)
 
-    def falls_on_dial(x, y):
-        return True if abs(x) <= dial.x_length and abs(y) <= dial.y_length else False
+    xj, yj, j_on_dial, j_above_dial_plane = _analemma_point_coordinates(
+        june_solstice_day, hour_offset, planet, dial
+    )
+    june_solstice_falls_on_dial = j_on_dial and j_above_dial_plane
 
-    xj, yj = _analemma_point_coordinates(june_solstice_day, hour_offset, planet, dial)
-    june_solstice_falls_on_dial = falls_on_dial(xj, yj)
-
-    xd, yd = _analemma_point_coordinates(
+    xd, yd, d_on_dial, d_above_dial_plane = _analemma_point_coordinates(
         december_solstice_day, hour_offset, planet, dial
     )
-    december_solstice_falls_on_dial = falls_on_dial(xd, yd)
-
-    if june_solstice_falls_on_dial and december_solstice_falls_on_dial:
-        p = _furthest_point((xj, yj), (xd, yd))
-        return p, _displace_point_along_hour_line(p, away_from_origin=True)
+    december_solstice_falls_on_dial = d_on_dial and d_above_dial_plane
 
     if not june_solstice_falls_on_dial and not december_solstice_falls_on_dial:
         return None
 
-    if june_solstice_falls_on_dial and not december_solstice_falls_on_dial:
-        p = (xj, yj)
-        return p, _displace_point_along_hour_line(p, away_from_origin=False)
-    elif december_solstice_falls_on_dial and not june_solstice_falls_on_dial:
-        p = (xd, yd)
-        return p, _displace_point_along_hour_line(p, away_from_origin=True)
+    label_point = _label_point(
+        (xj, yj), (xd, yd), june_solstice_falls_on_dial, december_solstice_falls_on_dial
+    )
+
+    return _point_and_text_coords(
+        (xj, yj), (xd, yd), label_point, (j_above_dial_plane, d_above_dial_plane)
+    )
 
 
 def hour_offset_to_oclock(hour_offset: int):
@@ -564,3 +762,43 @@ def annotate_analemma_with_hour(
                 fontsize="small",
             )
     return None
+
+
+def plot_hourly_analemmas(
+    ax: Axes,
+    planet: orbit.PlanetParameters,
+    dial: DialParameters,
+    title: str = None,
+    **kwargs,
+):
+    """
+    TODO
+    """
+    hour_offsets = find_daytime_offsets(planet, dial)
+
+    lines_for_legend = []
+    seasons = []
+    count = 0
+    for season in Season:
+        for hour in hour_offsets:
+            plot_analemma_season_segment(
+                ax, season, hour, planet, dial, linewidth=0.75, **kwargs
+            )
+            annotate_analemma_with_hour(ax, hour, planet, dial)
+        lines = plot_special_sun_path(
+            ax, season, planet, dial, linewidth=0.75, **kwargs
+        )
+        if len(lines) > 0:
+            lines_for_legend += lines
+            seasons += [count]
+            count += 1
+
+    # put a circle at the base of the gnomon
+    ax.plot(0, 0, "ok")
+
+    # reorder seasons
+    ordered_lines = [lines_for_legend[s] for s in seasons]
+    ax.legend(handles=ordered_lines)
+
+    if title:
+        ax.set_title(title)
