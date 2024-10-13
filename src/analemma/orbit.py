@@ -69,6 +69,15 @@ class PlanetParameters:
         """
         return np.mod(self.rho + self.om_sd * t, 2 * pi)
 
+    def orbit_angle(self, t):
+        """
+        TODO
+        """
+        phi = orbital_angle(spinor_time(t))
+        return np.mod(
+            pi + self.rho + phi, 2 * pi
+        )  # phi starts at perihelion, sigma starts at winter solstice
+
     def __hash__(self):
         # this is not as efficient as it could be but covers the
         # common case of reuse of the same object for a given planet
