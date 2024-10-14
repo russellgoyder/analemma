@@ -10,6 +10,7 @@ nav:
  - Home: 'index.md'
  - Analemma Plots: 'nb/sundial_plots.md'
  - The Equation of Time: 'nb/equation_of_time.md'
+ - Sunrise and Sunset: 'nb/sunrise_and_sunset.md'
  - Orbit Analysis: 'nb/orbit_analysis.md'
  - Deriving the Analemma:
    - Setup and Definitions: 'nb/sundial_setup.md'

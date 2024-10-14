@@ -7,7 +7,5 @@ then
     exit 1
 fi
 
-for x in $(ls docs/nb/*.ipynb); do python scripts/dollar_dollar.py $x $x; done
-
-find docs/nb -type 'f' -name '*.ipynb' -not -name "*-checkpoint.ipynb" | xargs jupyter nbconvert --to Markdown
+./scripts/doc_prebuild.sh
 mkdocs serve
