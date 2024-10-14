@@ -63,15 +63,23 @@ class PlanetParameters:
         return self.T_d * np.arange(int(self.N))
 
     def rotation_angle(self, t: npt.ArrayLike) -> npt.ArrayLike:
-        """
+        r"""
         Angle of planetary rotation increases linearly with time, one complete revolution
         after one siderial day, and an offset of rho
+
+        Parameters:
+            t: Collection of time in seconds starting at perihelion at which to calculate the planet's angle of rotation
+
+        Returns:
+            The angle $\psi$ measuring planetary rotation at the input times
         """
         return np.mod(self.rho + self.om_sd * t, 2 * pi)
 
-    def orbit_angle(self, t):
+    def orbit_angle(self, t: npt.ArrayLike) -> npt.ArrayLike:
         """
-        TODO
+
+        Parameters:
+            t: Collection of time in seconds starting at perihelion at which to calculate the planet's angle of rotation
         """
         phi = orbital_angle(spinor_time(t))
         return np.mod(

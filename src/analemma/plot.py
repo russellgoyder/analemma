@@ -235,8 +235,18 @@ def plot_sunrise_sunset(
     planet: orbit.PlanetParameters,
     dial: geom.DialParameters,
 ):
-    """
-    TODO
+    r"""
+    Visualize sunrise and sunset relative to a sundial
+
+    This function adds a line and three points to the given axes. The line is the sine of the angle between
+    sun rays the face of the sundial, over the course of a day. The three points mark sunrise, noon, and sunset,
+    when that angle is zero, maximal, and $\pi$ respectively.
+
+    Parameters:
+        ax: matplotlib axes
+        date: The date for which to visual sunrise and sunset
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
     """
     orbit_day = geom.orbit_date_to_day(date)
     day_type = _determine_day_type(planet, dial, orbit_day)
@@ -285,7 +295,17 @@ def plot_annual_sunray_dialface_angle(
     dial: geom.DialParameters,
 ):
     """
-    TODO
+    Plot the sine of the sunray-dialface angle for each hour in the day over one year
+
+    If the sine of the angle between the sun ray and the dial face is greater than zero, the gnomon's
+    shadow may fall on the dial (depending on its size) and therefore part of the analemma may be
+    visible. This defines daytime relative to the dial.
+
+    Parameters:
+        ax1: A matplotlib axes object to hold plots for the morning hours
+        ax2: A matplotlib axes object to hold plots for the afternon and evening hours
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
     """
 
     def _accentuate_x_axis(ax):
@@ -338,20 +358,6 @@ def _get_sun_times(planet: orbit.PlanetParameters, dial: geom.DialParameters):
             for days_since_perihelion in np.arange(0, 365)
         ]
     return _sun_times_cache[key]
-
-
-def longest_and_shortest_days(
-    planet: orbit.PlanetParameters, dial: geom.DialParameters
-):
-    """
-    TODO
-    """
-    sun_times = _get_sun_times(planet, dial)
-    day_lengths = [
-        st.sunset.hours_from_midnight - st.sunrise.hours_from_midnight
-        for st in sun_times
-    ]
-    return (np.argmax(day_lengths), np.argmin(day_lengths))
 
 
 def _solstice_days(planet: orbit.PlanetParameters, dial: geom.DialParameters):
@@ -498,7 +504,19 @@ def plot_hourly_analemmas(
     **kwargs,
 ):
     """
-    TODO
+    Plot one analemma for each hour as seen on the face of a sundial
+
+    This function plots several analemmas, one per hour of daytime. The line style shows the season. One line
+    showing the path of the shadow tip during the day for each solstice is also shown (with line style appropriate to
+    the season) and forms an envelope marking the longest shadows in Winter and the shortest shadows in Summer.
+    Similarly, the path of the shadow tip on each equinox is shown and appears as a straight line. Moreover, the two
+    straight lines fall on top of each other.
+
+    Parameters:
+        ax: matplotlib axes
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
+        title: Title to add to the axes
     """
     hour_offsets = geom.find_daytime_offsets(planet, dial)
 

@@ -141,6 +141,9 @@ class DialParameters:
         Parameters:
             x: x-values of a set of points in 2-d
             y: y-values of a set of points in 2-d
+
+        Returns:
+            The input arrays of x and y coordinates with those points falling outside the face of the sundial set to NaN
         """
 
         def dial_trim(vec, dial_length):
@@ -150,9 +153,16 @@ class DialParameters:
 
         return dial_trim(x, self.x_length), dial_trim(y, self.y_length)
 
-    def within_face(self, x: np.array, y: np.array):
+    def within_face(self, x: np.array, y: np.array) -> np.array:
         """
-        TODO
+        Determine which of a collection of points falls within the face of a sundial
+
+        Parameters:
+            x: x-values of a set of points in 2-d
+            y: y-values of a set of points in 2-d
+
+        Returns:
+            An array of boolean values indicating whether each input point falls within the face of the sundial
         """
 
         def _within_dialface(vec, dial_length):
@@ -366,9 +376,24 @@ class Season(Enum):
 
 def calc_raw_analemma_points(
     t: np.array, planet: orbit.PlanetParameters, dial: DialParameters
-):
+) -> Tuple[np.array, np.array, np.array]:
     """
-    TODO
+    Calculate a collection of x and y coordinates of points on the projection of an analemma on a sundial
+
+    For each given time, for the given sundial on the given planet, calculate the corresponding
+    coordinate of the projection of the analemma onto the face of the dial. This corresponds to
+    the tip of the shadow cast by the dial's gnomon.
+
+    In addition, return an array of boolean values indicating whether each point falls within the face
+    of the dial. See also [analemma.geometry.DialParameters.within_face][]
+
+    Parameters:
+        t: Array of times in seconds since perihelion
+        planet: Parameters of the planet
+        dial: Parameters of the sundial
+
+    Returns:
+        A 3-tuple `(x, y, w)` where `x` and `y` are arrays of coordinates and `w` is an array of Boolean values
     """
     psis = planet.rotation_angle(t)
     sigmas = planet.orbit_angle(t)
@@ -384,9 +409,24 @@ def calc_raw_analemma_points(
 
 def calc_analemma_points(
     t: np.array, planet: orbit.PlanetParameters, dial: DialParameters, trim: bool = True
-):
+) -> Tuple[np.array, np.array]:
     """
-    TODO
+    Calculate a collection of x and y coordinates of points on the projection of an analemma on a sundial
+
+    For each given time, for the given sundial on the given planet, calculate the corresponding
+    coordinate of the projection of the analemma onto the face of the dial. This corresponds to
+    the tip of the shadow cast by the dial's gnomon.
+
+    In each array, if `trim` is `True`, the coordinate values will be set to NaN if the point does
+    not fall within the face of the sundial.
+
+    Parameters:
+        t: Array of times in seconds since perihelion
+        planet: Parameters of the planet
+        dial: Parameters of the sundial
+
+    Returns:
+        A 2-tuple `(x, y)` where `x` and `y` are arrays of coordinates
     """
     x, y, _ = calc_raw_analemma_points(t, planet, dial)
     return dial.trim_coords(x, y) if trim else (x, y)
