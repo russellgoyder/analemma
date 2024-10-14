@@ -219,7 +219,7 @@ def unit_shadow(dialface: mv.Mv, shadow_bivector: mv.Mv) -> mv.Mv:
     [intersection of the shadow plane and dial face][analemma.algebra.result.dialface_shadowbivector_intersection]
     is $\sin(\Xi)\sin(\psi)$. Here, we divide $u$ by its length to form a unit vector parallel to the shadow:
 
-    $\hat{w} = \frac{w}{L} = \frac{u}{|u|} = \frac{u}{\sin(\Xi)\sin(\psi)}$
+    $$\hat{w} = \frac{w}{L} = \frac{u}{|u|} = \frac{u}{\sin(\Xi)\sin(\psi)}$$
 
     See [Normalization](../nb/shadow_angle.md#normalization)
 
