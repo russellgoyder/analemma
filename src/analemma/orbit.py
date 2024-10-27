@@ -6,6 +6,10 @@ import math
 import numpy as np
 from numpy import sin, cos, typing as npt
 from dataclasses import dataclass, field
+import datetime
+from functools import lru_cache
+from skyfield import almanac
+from skyfield.api import load
 
 
 pi = math.pi
@@ -185,3 +189,41 @@ def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth, e=None):
     tanSigY = (A**2 - B**2) * sin(2 * Om * s)
     tanSigX = (A**2 + B**2) * cos(2 * Om * s) + 2 * A * B
     return np.arctan2(tanSigY, tanSigX) + pi
+
+
+_cache_max_size = 50
+
+
+@lru_cache(maxsize=_cache_max_size)
+def _skyfield_ephemeris():
+    return load("de421.bsp"), load.timescale()
+
+
+def _skyfield_season_events(year: int):
+    eph, ts = _skyfield_ephemeris()
+    jan1 = ts.utc(year, 1, 1)
+    dec31 = ts.utc(year, 12, 31)
+    event_times, _ = almanac.find_discrete(jan1, dec31, almanac.seasons(eph))
+    return event_times
+
+
+@dataclass
+class _OrbitDateAndAngle:
+    date: datetime.date
+    sigma: float
+
+
+def season_event_info(season_value: int, year: int):
+    """
+    TODO also return type
+    """
+    season_events = _skyfield_season_events(year)
+    # S S A W (seasons)
+    # 1 2 3 0 (Season enum)
+    # 0 1 2 3 (Skyfield)
+    skyfield_season_value = (season_value + 3) % 4
+    season_event_angles = [pi / 2, 0, 3 * pi / 2, pi]
+    return _OrbitDateAndAngle(
+        season_events[skyfield_season_value].utc_datetime().date(),
+        season_event_angles[skyfield_season_value],
+    )

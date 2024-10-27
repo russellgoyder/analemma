@@ -24,6 +24,7 @@ keywords = [
 dependencies = [
     "numpy",
     "scipy",
+    "skyfield",
     "matplotlib",
     "sympy",
     "galgebra",
