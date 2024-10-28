@@ -1,7 +1,11 @@
 
 # Changelog
 
-## Latest
+## v0.2
+
+Integated [Skyfield](https://rhodesmill.org/skyfield/) for season events and apsides.
+
+## v0.1
 
 Generalized `hour_offset` to float in order to plot analemma at any time of day.
 
