@@ -180,7 +180,7 @@ def plot_special_sun_path(
 
     season_event = orbit.season_event_info(season.value, year)
 
-    orbit_day = geom.orbit_date_to_day(season_event.date)
+    orbit_day = orbit.orbit_date_to_day(season_event.date)
     day_type = _determine_day_type(planet, dial, orbit_day)
     if day_type == DayType.SunNeverRises:
         return []
@@ -238,7 +238,7 @@ def plot_sunrise_sunset(
         planet: The planet on which the dial is located
         dial: The orientation and location of the sundial
     """
-    orbit_day = geom.orbit_date_to_day(date)
+    orbit_day = orbit.orbit_date_to_day(date)
     day_type = _determine_day_type(planet, dial, orbit_day)
     if not day_type == DayType.SunRisesAndSets:
         raise Exception(

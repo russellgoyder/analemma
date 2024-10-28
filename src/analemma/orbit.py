@@ -10,6 +10,7 @@ import datetime
 from functools import lru_cache
 from skyfield import almanac
 from skyfield.api import load
+from skyfield import searchlib as sf_search
 
 
 pi = math.pi
@@ -196,7 +197,7 @@ _cache_max_size = 50
 
 @lru_cache(maxsize=_cache_max_size)
 def _skyfield_ephemeris():
-    return load("de421.bsp"), load.timescale()
+    return load("de440s.bsp"), load.timescale()
 
 
 def _skyfield_season_events(year: int):
@@ -227,3 +228,41 @@ def season_event_info(season_value: int, year: int):
         season_events[skyfield_season_value].utc_datetime().date(),
         season_event_angles[skyfield_season_value],
     )
+
+
+def _earth_distance(time):
+    eph, _ = _skyfield_ephemeris()
+    earth = eph["earth"]
+    sun = eph["sun"]
+    e = earth.at(time)
+    s = e.observe(sun)
+    return s.distance().km
+
+
+_earth_distance.step_days = 1
+
+
+def _perihelion_date(year: int) -> datetime.date:
+    _, ts = _skyfield_ephemeris()
+    start_time = ts.utc(year, 1, 1)
+    end_time = ts.utc(year + 1, 1, 1)
+    perihelion = sf_search.find_minima(start_time, end_time, _earth_distance)
+    return perihelion[0][0].utc_datetime().date()
+
+
+def orbit_day_to_date(orbit_day: int, year: int = None) -> datetime.date:
+    """
+    Convert from the number of days since perihelion to the date
+    """
+    if not year:
+        year = datetime.date.today().year
+    return _perihelion_date(year) + datetime.timedelta(days=int(orbit_day))
+
+
+def orbit_date_to_day(the_date: datetime.date, year: int = None) -> int:
+    """
+    Convert from the date to the number of days since perihelion
+    """
+    if not year:
+        year = datetime.date.today().year
+    return (the_date - _perihelion_date(year)).days
