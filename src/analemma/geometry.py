@@ -7,7 +7,6 @@ from numpy import sin, cos, typing as npt
 from scipy import optimize as sci_opt
 from typing import Tuple
 from dataclasses import dataclass
-import datetime
 from enum import Enum
 from analemma import orbit
 
@@ -300,30 +299,6 @@ def find_sun_rise_noon_set_relative_to_dial_face(
     )
 
     return SunTimes(t_sunrise, t_noon, t_sunset, days_since_perihelion)
-
-
-def orbit_day_to_date(orbit_day: int, year=2024) -> datetime.date:
-    """
-    Convert from the number of days since perihelion to the date
-
-    Note that this varies from year to year and this implementation is only exact for 2024
-    """
-    perihelion_date = datetime.date.fromisoformat(
-        f"{year}-01-03"
-    )  # approximately true for other years
-    return perihelion_date + datetime.timedelta(days=int(orbit_day))
-
-
-def orbit_date_to_day(the_date: datetime.date, year=2024) -> int:
-    """
-    Convert from the date to the number of days since perihelion
-
-    Note that this varies from year to year and this implementation is only exact for 2024
-    """
-    perihelion_date = datetime.date.fromisoformat(
-        f"{year}-01-03"
-    )  # approximately true for other years
-    return (the_date - perihelion_date).days
 
 
 def sunray_dialface_angle(

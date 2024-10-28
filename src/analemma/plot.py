@@ -3,7 +3,6 @@ Functionality for visualizing analemma projections on sundial and related phenom
 """
 
 import numpy as np
-from dataclasses import dataclass
 import datetime
 from enum import Enum
 from typing import TypeVar
@@ -34,7 +33,7 @@ def _analemma_plot_sampling_times(
     planet: orbit.PlanetParameters,
     dial: geom.DialParameters,
 ):
-    # season lengths are [89, 91, 94, 91] (Winter Spring Summer Autumn)
+    # season lengths are [89, 92, 94, 90] (Winter Spring Summer Autumn) in 2024
     # place equinoxes and solstices in the middle for plotting
     season_boundaries = [0, 44, 135, 229, 320]
     if season != geom.Season.Winter:
@@ -129,28 +128,6 @@ def plot_analemma(
     )
 
 
-@dataclass
-class _OrbitDateAndAngle:
-    date: datetime.date
-    sigma: float
-
-
-_equinox_or_solstice_info = {
-    geom.Season.Summer.value: _OrbitDateAndAngle(
-        datetime.date.fromisoformat("2024-06-20"), 0
-    ),
-    geom.Season.Spring.value: _OrbitDateAndAngle(
-        datetime.date.fromisoformat("2024-03-20"), pi / 2
-    ),
-    geom.Season.Winter.value: _OrbitDateAndAngle(
-        datetime.date.fromisoformat("2024-12-21"), pi
-    ),
-    geom.Season.Autumn.value: _OrbitDateAndAngle(
-        datetime.date.fromisoformat("2024-09-22"), 3 * pi / 2
-    ),
-}
-
-
 class DayType(Enum):
     SunNeverRises = 0
     SunNeverSets = 1
@@ -177,20 +154,33 @@ def _determine_day_type(
         return DayType.SunRisesAndSets
 
 
-def plot_special_sun_path(
+def plot_season_event_sun_path(
     ax: Axes,
     season: geom.Season,
     planet: orbit.PlanetParameters,
     dial: geom.DialParameters,
+    year: int = None,
     **kwargs,
 ):
     """
     Plot the path of the sun across the dial on the equinox or solstice in the given season
+
+    Parameters:
+        ax: matplotlib axes
+        season: The given season
+        planet: The planet on which the dial is located
+        dial: The orientation and location of the sundial
+        year: The year in which the seasons events fall (defaults to current year)
     """
 
     num_times = 1000
 
-    orbit_day = geom.orbit_date_to_day(_equinox_or_solstice_info[season.value].date)
+    if not year:
+        year = datetime.today().year
+
+    season_event = orbit.season_event_info(season.value, year)
+
+    orbit_day = orbit.orbit_date_to_day(season_event.date)
     day_type = _determine_day_type(planet, dial, orbit_day)
     if day_type == DayType.SunNeverRises:
         return []
@@ -213,7 +203,7 @@ def plot_special_sun_path(
 
     psis = planet.rotation_angle(times)
 
-    sigma = _equinox_or_solstice_info[season.value].sigma
+    sigma = season_event.sigma
     x_raw, y_raw = geom.shadow_coords_xy(
         planet.alpha, sigma, psis, dial.iota, dial.theta, dial.i, dial.d
     )
@@ -248,7 +238,7 @@ def plot_sunrise_sunset(
         planet: The planet on which the dial is located
         dial: The orientation and location of the sundial
     """
-    orbit_day = geom.orbit_date_to_day(date)
+    orbit_day = orbit.orbit_date_to_day(date)
     day_type = _determine_day_type(planet, dial, orbit_day)
     if not day_type == DayType.SunRisesAndSets:
         raise Exception(
@@ -501,6 +491,7 @@ def plot_hourly_analemmas(
     planet: orbit.PlanetParameters,
     dial: geom.DialParameters,
     title: str = None,
+    year: int = None,
     **kwargs,
 ):
     """
@@ -517,6 +508,7 @@ def plot_hourly_analemmas(
         planet: The planet on which the dial is located
         dial: The orientation and location of the sundial
         title: Title to add to the axes
+        year: Year for which the plot hourly analemmas (defaults to current year)
     """
     hour_offsets = geom.find_daytime_offsets(planet, dial)
 
@@ -529,8 +521,8 @@ def plot_hourly_analemmas(
                 ax, season, hour, planet, dial, linewidth=0.75, **kwargs
             )
             annotate_analemma_with_hour(ax, hour, planet, dial)
-        lines = plot_special_sun_path(
-            ax, season, planet, dial, linewidth=0.75, **kwargs
+        lines = plot_season_event_sun_path(
+            ax, season, planet, dial, linewidth=0.75, year=year, **kwargs
         )
         if len(lines) > 0:
             lines_for_legend += lines

@@ -1,6 +1,6 @@
 import datetime
 import numpy as np
-from analemma import geometry as geom
+from analemma import orbit, geometry as geom
 
 
 def test_sun_rise_noon_set(earth, camdial):
@@ -33,25 +33,26 @@ def test_solstices(earth, camdial):
     december_solstice = np.argmin(day_lengths)
     june_solstice = np.argmax(day_lengths)
 
-    assert geom.orbit_day_to_date(0) == datetime.date.fromisoformat("2024-01-03")
-    assert geom.orbit_day_to_date(june_solstice) == datetime.date.fromisoformat(
+    assert orbit.orbit_day_to_date(0) == datetime.date.fromisoformat("2024-01-03")
+    assert orbit.orbit_day_to_date(june_solstice) == datetime.date.fromisoformat(
         "2024-06-21"
     )
-    assert geom.orbit_day_to_date(december_solstice) == datetime.date.fromisoformat(
+    assert orbit.orbit_day_to_date(december_solstice) == datetime.date.fromisoformat(
         "2024-12-21"
     )
 
-    assert geom.orbit_date_to_day(datetime.date.fromisoformat("2024-01-03")) == 0
+    assert orbit.orbit_date_to_day(datetime.date.fromisoformat("2024-01-03")) == 0
     assert (
-        geom.orbit_date_to_day(datetime.date.fromisoformat("2024-06-21"))
+        orbit.orbit_date_to_day(datetime.date.fromisoformat("2024-06-21"))
         == june_solstice
     )
     assert (
-        geom.orbit_date_to_day(datetime.date.fromisoformat("2024-12-21"))
+        orbit.orbit_date_to_day(datetime.date.fromisoformat("2024-12-21"))
         == december_solstice
     )
 
     arbitrary_date = datetime.date.fromisoformat("2024-05-26")
     assert (
-        geom.orbit_day_to_date(geom.orbit_date_to_day(arbitrary_date)) == arbitrary_date
+        orbit.orbit_day_to_date(orbit.orbit_date_to_day(arbitrary_date))
+        == arbitrary_date
     )

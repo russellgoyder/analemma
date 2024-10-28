@@ -43,7 +43,7 @@ ap.plot_analemma(ax, earth, vertical_dial)
 See [Analemma Plots](nb/sundial_plots.md) for complete examples showing various analemmas.
 
 For the connection between the angle of the sun, the date, and the time, see [The Equation of
-Time](nb/equation_of_time.md) and [Orbit Analysis](nb/orbit_analysis.md).
+Time](nb/equation_of_time.md), [Sunrise and Sunset](nb/sunrise_and_sunset.md), and [Orbit Analysis](nb/orbit_analysis.md).
 
 ## Background
 
@@ -58,6 +58,7 @@ The analemma is the path traced by the shadow on a sundial (or the sun in the sk
  * [The Shadow Angle](nb/shadow_angle.md): unit vector parallel to the shadow and how it moves in time
  * [The Shadow Length](nb/shadow_length.md): the length of the shadow
  * [The Analemma](nb/analemma.md): parametric expression for the analemma as the coordinates of the tip of a sundial's shadow
+ * [Comparison with Rohr's book](nb/rohr_comparison.md): comparison with known results from a standard text
 
 
 ## Project Links
