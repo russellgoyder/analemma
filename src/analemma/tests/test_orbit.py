@@ -1,8 +1,10 @@
 import pytest
 import datetime
+import numpy as np
 from skyfield import almanac
 from skyfield.api import load
 from skyfield import searchlib as sf_search
+from analemma import orbit, geometry as geom
 
 
 def _ephemeris():
@@ -64,6 +66,9 @@ _earth_distance.step_days = 1
 
 
 def test_perihelion_date(timescale):
+    """
+    Ensure that we are finding the known (date of the) perihelion in 2024
+    """
     year = 2024
     start_time = timescale.utc(year, 1, 1)
     end_time = timescale.utc(year + 1, 1, 1)
@@ -71,3 +76,24 @@ def test_perihelion_date(timescale):
     assert perihelion[0][0].utc_datetime().date() == datetime.date.fromisoformat(
         "2024-01-03"
     )
+
+
+def test_season_event_day_diffs():
+    """
+    Ensure that the numbers of days separating season events in 2024 match known values
+    """
+    year = 2024
+    days = []
+    for season in geom.Season:  # Winter first
+        days.append(
+            orbit.orbit_date_to_day(
+                orbit.season_event_info(season.value, year).date, year
+            )
+        )
+
+    days.sort()  # [77, 169, 263, 353]
+
+    diffs = np.diff(np.array(days))
+    diffs = [(days[0] - days[3]) % 365] + list(diffs)  # days from 353 to 77
+    for diff, ans in zip(diffs, [89, 92, 94, 90]):
+        assert diff == ans

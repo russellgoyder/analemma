@@ -33,7 +33,7 @@ def _analemma_plot_sampling_times(
     planet: orbit.PlanetParameters,
     dial: geom.DialParameters,
 ):
-    # season lengths are [89, 91, 94, 91] (Winter Spring Summer Autumn)
+    # season lengths are [89, 92, 94, 90] (Winter Spring Summer Autumn) in 2024
     # place equinoxes and solstices in the middle for plotting
     season_boundaries = [0, 44, 135, 229, 320]
     if season != geom.Season.Winter:
@@ -154,7 +154,7 @@ def _determine_day_type(
         return DayType.SunRisesAndSets
 
 
-def plot_special_sun_path(
+def plot_season_event_sun_path(
     ax: Axes,
     season: geom.Season,
     planet: orbit.PlanetParameters,
@@ -521,7 +521,7 @@ def plot_hourly_analemmas(
                 ax, season, hour, planet, dial, linewidth=0.75, **kwargs
             )
             annotate_analemma_with_hour(ax, hour, planet, dial)
-        lines = plot_special_sun_path(
+        lines = plot_season_event_sun_path(
             ax, season, planet, dial, linewidth=0.75, year=year, **kwargs
         )
         if len(lines) > 0:
