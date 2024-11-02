@@ -19,4 +19,4 @@ mkdocs:
 # Optionally declare the Python requirements required to build your docs
 python:
   install:
-  - requirements: requirements_dev.txt
+  - requirements: requirements.txt
