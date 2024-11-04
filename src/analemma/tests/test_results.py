@@ -133,7 +133,7 @@ def test_shadow_bivector_magnitude_angle_cos():
     r"""
     Compare two different ways of calculating $\cos(\Xi)$
 
-    Ensure that $s\cdot g$ as computed via symbolic is equal to an independent derivation
+    Ensure that $s\cdot g$ as computed via symbolic algebra is equal to an independent derivation
     """
 
     s = frame.sunray()
