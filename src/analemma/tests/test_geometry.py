@@ -4,6 +4,7 @@ from sympy import utilities as util
 from analemma import geometry as geom
 from analemma.algebra import frame, result
 
+
 pi = np.pi
 hour_angle_args = ["alpha", "sigma", "psi", "iota", "theta"]
 
@@ -99,3 +100,25 @@ def test_hour_angle(alpha, sigma, psi, iota, theta):
     assert np.tan(geom.hour_angle(alpha, sigma, psi, iota - theta)) == pytest.approx(
         sin_val / cos_val
     )
+
+
+@pytest.mark.parametrize(("latitude"), [0, 40, 50, 90, -10, -90, -0])
+def test_common_dial_types_basic_construction(latitude: float):
+    eq = geom.DialParameters.equatorial(latitude=latitude)
+    theta = (90 - latitude) / 180 * pi
+    assert eq.theta == pytest.approx(theta)
+    assert eq.theta == pytest.approx(eq.iota) == pytest.approx(eq.i)
+    assert pytest.approx(eq.d) == pytest.approx(0)
+
+    hor = geom.DialParameters.horizontal(latitude=latitude)
+    theta = (90 - latitude) / 180 * pi
+    assert hor.theta == pytest.approx(theta)
+    assert hor.theta == pytest.approx(hor.iota)
+
+    vert = geom.DialParameters.vertical(latitude=latitude)
+    theta = (90 - latitude) / 180 * pi
+    assert vert.theta == pytest.approx(theta)
+    assert vert.theta == pytest.approx(eq.iota)
+    assert vert.i == pytest.approx(pi / 2)
+    decl = pi if latitude >= 0 else 0
+    assert vert.d == pytest.approx(decl)

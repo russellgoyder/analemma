@@ -171,6 +171,37 @@ class DialParameters:
 
         return _within_dialface(x, self.x_length) & _within_dialface(y, self.y_length)
 
+    @classmethod
+    def equatorial(cls, latitude: float) -> "DialParameters":
+        """
+        An equatorial dial's face is parallel to the plane of the equator, and the style
+        is therefore perpendicular to both.
+        """
+        theta = (90 - latitude) / 180 * pi
+        return cls(theta=theta, iota=theta, i=theta, d=0)
+
+    @classmethod
+    def horizontal(cls, latitude: float) -> "DialParameters":
+        """
+        A horizontal dial's face is parallel to the ground, with a style aligned
+        with the planet's axis of rotation.
+        """
+        theta = (90 - latitude) / 180 * pi
+        return cls(theta=theta, iota=theta, i=0, d=0)
+
+    @classmethod
+    def vertical(cls, latitude: float) -> "DialParameters":
+        """
+        A vertical dial's face is perpendicular to the ground, and typically faces either
+        south in the northern hemisphere and north in the southern hemisphere. Instances of
+        this class represent a south-facing dial on the equator and in northern latitudes, and
+        a noth-facing dial below the equator (in southern latitudes). Its gnomon
+        is a style, aligned with the planet's axis of rotation.
+        """
+        d = pi if latitude >= 0 else 0
+        theta = (90 - latitude) / 180 * pi
+        return cls(theta=theta, iota=theta, i=pi / 2, d=d)
+
 
 def sin_sunray_dialface_angle(
     t: np.array, planet: orbit.PlanetParameters, dial: DialParameters
