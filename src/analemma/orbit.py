@@ -166,8 +166,6 @@ def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Invert t(s), the relationship of orbital time t with the parameter in the spinor
     treatment of the Kepler problem, s, to give s(t).
-
-    Keep a cache of interpolants, one per eccentricity.
     """
     s_points, t_points = _finegrained_interp_points(planet)
     return np.interp(t, t_points, s_points)
