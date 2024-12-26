@@ -85,7 +85,7 @@ def plot_analemma_season_segment(
 
     times = _analemma_plot_sampling_times(season, hour_offset, planet, dial)
     if times.size == 0:
-        return ax
+        return []
     return _plot_analemma_segment(
         ax,
         times,
@@ -179,6 +179,14 @@ def plot_season_event_sun_path(
         year = datetime.today().year
 
     season_event = orbit.season_event_info(season.value, year)
+
+    # for an equatorial dial on the equinoxes, the sun ray is parallel to the dial face
+    if (
+        season.name in ("Spring", "Autumn")
+        and abs(dial.d) < 1.0e-5
+        and abs(dial.theta - dial.i) < 0.25 / 180 * pi
+    ):
+        return []
 
     orbit_day = orbit.orbit_date_to_day(season_event.date)
     day_type = _determine_day_type(planet, dial, orbit_day)
@@ -335,21 +343,6 @@ def _analemma_point_coordinates(
     return x, y, on_dial, above_dial_plane
 
 
-_sun_times_cache = {}
-
-
-def _get_sun_times(planet: orbit.PlanetParameters, dial: geom.DialParameters):
-    key = (id(planet), id(dial))
-    if key not in _sun_times_cache.keys():
-        _sun_times_cache[key] = [
-            geom.find_sun_rise_noon_set_relative_to_dial_face(
-                days_since_perihelion, planet, dial
-            )
-            for days_since_perihelion in np.arange(0, 365)
-        ]
-    return _sun_times_cache[key]
-
-
 def _solstice_days(planet: orbit.PlanetParameters, dial: geom.DialParameters):
     _, sines = geom.sunray_dialface_angle_over_one_year(planet, dial)
     return (np.argmax(sines), np.argmin(sines))
@@ -460,6 +453,19 @@ def hour_offset_to_oclock(hour_offset: int):
         raise Exception(f"hour_offset {hour_offset} doesn't seem to be a number")
 
 
+def _font_size(ax: Axes) -> str:
+    "Map bounding box width in inches to font size string"
+    bbox = ax.get_window_extent().transformed(
+        ax.get_figure().dpi_scale_trans.inverted()
+    )
+    if bbox.width >= 6:
+        return "small"
+    elif bbox.width >= 4:
+        return "x-small"
+    else:
+        return "xx-small"
+
+
 def annotate_analemma_with_hour(
     ax: Axes,
     hour_offset: int,
@@ -481,9 +487,32 @@ def annotate_analemma_with_hour(
                 xytext=ptext,
                 arrowprops={"arrowstyle": "-"},
                 horizontalalignment="center",
-                fontsize="small",
+                fontsize=_font_size(ax),
             )
     return None
+
+
+def _reorder_legend_info(legend_info):
+    """
+    Move Winter to the end of the list
+    """
+    if legend_info[0][1] == "Winter":
+        winter_entry = legend_info.pop(0)
+        legend_info.append(winter_entry)
+    return legend_info
+
+
+def _adjust_for_hemisphere(dial, labels):
+    if dial.theta < pi / 2:
+        return labels
+    else:
+        mapping = {
+            "Winter": "Summer",
+            "Spring": "Autumn",
+            "Summer": "Winter",
+            "Autumn": "Spring",
+        }
+        return [mapping[label] for label in labels]
 
 
 def plot_hourly_analemmas(
@@ -497,44 +526,44 @@ def plot_hourly_analemmas(
     """
     Plot one analemma for each hour as seen on the face of a sundial
 
-    This function plots several analemmas, one per hour of daytime. The line style shows the season. One line
-    showing the path of the shadow tip during the day for each solstice is also shown (with line style appropriate to
-    the season) and forms an envelope marking the longest shadows in Winter and the shortest shadows in Summer.
-    Similarly, the path of the shadow tip on each equinox is shown and appears as a straight line. Moreover, the two
-    straight lines fall on top of each other.
+    This function plots several analemmas, one per hour of daytime. The line style shows the season. One line showing
+    the path of the shadow tip during the day for each solstice is also shown (with line style appropriate to the
+    season) and on a horizontal dial forms an envelope marking the longest shadows in Winter and the shortest shadows in
+    Summer. Similarly, the path of the shadow tip on each equinox is shown and appears as a straight line. Moreover, the
+    two straight lines fall on top of each other.
+
+    In the legend, the seasons are labelled according to the hemisphere in which the sundial is located, so that for
+    sundials in the southern hemisphere, summer occurs in December.
 
     Parameters:
-        ax: matplotlib axes
-        planet: The planet on which the dial is located
-        dial: The orientation and location of the sundial
-        title: Title to add to the axes
-        year: Year for which the plot hourly analemmas (defaults to current year)
+        ax: matplotlib axes planet: The planet on which the dial is located dial: The orientation and location of the
+        sundial title: Title to add to the axes year: Year for which the plot hourly analemmas (defaults to current
+        year)
     """
     hour_offsets = geom.find_daytime_offsets(planet, dial)
 
-    lines_for_legend = []
-    seasons = []
-    count = 0
+    legend_info = []
     for season in geom.Season:
+        segment_lines = []
         for hour in hour_offsets:
-            plot_analemma_season_segment(
+            segment_lines += plot_analemma_season_segment(
                 ax, season, hour, planet, dial, linewidth=0.75, **kwargs
             )
             annotate_analemma_with_hour(ax, hour, planet, dial)
-        lines = plot_season_event_sun_path(
+
+        if len(segment_lines) > 0:
+            legend_info.append((segment_lines[0], season.name))
+
+        plot_season_event_sun_path(
             ax, season, planet, dial, linewidth=0.75, year=year, **kwargs
         )
-        if len(lines) > 0:
-            lines_for_legend += lines
-            seasons += [count]
-            count += 1
 
     # put a circle at the base of the gnomon
     ax.plot(0, 0, "ok")
 
-    # reorder seasons
-    ordered_lines = [lines_for_legend[s] for s in seasons]
-    ax.legend(handles=ordered_lines)
+    handles, labels = zip(*_reorder_legend_info(legend_info))
+    labels = _adjust_for_hemisphere(dial, labels)
+    ax.legend(handles, labels, fontsize=_font_size(ax))
 
     if title:
         ax.set_title(title)

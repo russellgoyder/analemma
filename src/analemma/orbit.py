@@ -61,6 +61,19 @@ class PlanetParameters:
         self.T_sd = self.N / (self.N + 1) * self.T_d
         self.Om = pi / self.T_y * self.a
 
+    def clone_with_eccentricity(self, e: float):
+        """
+        Return a new instance with the same parameters but a different eccentricity
+        """
+        return PlanetParameters(
+            N=self.N,
+            T_d=self.T_d,
+            rho=self.rho,
+            alpha=self.alpha,
+            a=self.a,
+            e=e,
+        )
+
     def daily_noons(self) -> np.array:
         """
         Daily time samples in seconds from noon at perihelion
@@ -117,17 +130,16 @@ An instance of PlanetParameters representing Earth
 """
 
 
-def _kepler_params(planet: PlanetParameters = earth, e: float = None):
+def _kepler_params(planet: PlanetParameters = earth):
     a = planet.a
-    if not e:
-        e = planet.e
+    e = planet.e
     b = a * math.sqrt(1 - e**2)  # semi-minor axis
     A = math.sqrt((a + b) / 2)
     B = math.sqrt((a - b) / 2)
     return A, B, planet.Om, planet.T_y
 
 
-def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
+def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Calculate orbital time given time parameter, t(s)
 
@@ -136,63 +148,45 @@ def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = 
         planet: Planet whose orbit is being analyzed
         e: Optional override for the orbit's eccentricity
     """
-    A, B, Om, T_y = _kepler_params(planet, e)
+    A, B, Om, T_y = _kepler_params(planet)
     return (A**2 + B**2) * s + A * B / Om * sin(2 * Om * s) + T_y / 2
 
 
-_s_finegrained = np.linspace(-pi / earth.Om / 2, pi / earth.Om / 2, 10_000)
-"""
-1-d grid used when inverting the relationship between orbital and spinor time
-"""
+_cache_max_size = 50
 
 
-def _key(e: float) -> int:
-    """
-    The first four significant figures of the given number
-    """
-    return int(10_000 * e)
+@lru_cache(maxsize=_cache_max_size)
+def _finegrained_interp_points(planet: PlanetParameters):
+    s_points = np.linspace(-pi / planet.Om / 2, pi / planet.Om / 2, 10_000)
+    t_points = orbital_time(s_points, planet)
+    return s_points, t_points
 
 
-_t_finegrained = {_key(earth.e): orbital_time(_s_finegrained)}
-"""
-Cache of interpolation data used when inverting the relationship between orbital and spinor time 
-"""
-
-
-def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
+def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Invert t(s), the relationship of orbital time t with the parameter in the spinor
     treatment of the Kepler problem, s, to give s(t).
-
-    Keep a cache of interpolants, one per eccentricity.
     """
-    if not e:
-        e = planet.e
-    k = _key(e)
-    if k not in _t_finegrained.keys():
-        _t_finegrained[k] = orbital_time(_s_finegrained, planet, e)
-    return np.interp(t, _t_finegrained[k], _s_finegrained)
+    s_points, t_points = _finegrained_interp_points(planet)
+    return np.interp(t, t_points, s_points)
 
 
-def orbital_radius(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
+def orbital_radius(s: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Calculate orbital radial coordinate given spinor time parameter, r(s)
     """
-    A, B, Om, _ = _kepler_params(planet, e)
+    A, B, Om, _ = _kepler_params(planet)
     return A**2 + B**2 + 2 * A * B * cos(2 * Om * s)
 
 
-def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth, e=None):
+def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Calculate orbital angular coordinate given time parameter, phi(s)
     """
-    A, B, Om, _ = _kepler_params(planet, e)
+    A, B, Om, _ = _kepler_params(planet)
     tanSigY = (A**2 - B**2) * sin(2 * Om * s)
     tanSigX = (A**2 + B**2) * cos(2 * Om * s) + 2 * A * B
     return np.arctan2(tanSigY, tanSigX) + pi
-
-
-_cache_max_size = 50
 
 
 @lru_cache(maxsize=_cache_max_size)
@@ -209,14 +203,19 @@ def _skyfield_season_events(year: int):
 
 
 @dataclass
-class _OrbitDateAndAngle:
+class OrbitDateAndAngle:
+    """
+    Pairing of a date and the corresponding orbit angle
+    """
+
     date: datetime.date
     sigma: float
 
 
-def season_event_info(season_value: int, year: int):
+def season_event_info(season_value: int, year: int) -> OrbitDateAndAngle:
     """
-    TODO also return type
+    Return the date and orbit angle for an equinox or solstice in a given year, identified by
+    the season's value as per [analemma.geometry.Season][].
     """
     season_events = _skyfield_season_events(year)
     # S S A W (seasons)
@@ -224,7 +223,7 @@ def season_event_info(season_value: int, year: int):
     # 0 1 2 3 (Skyfield)
     skyfield_season_value = (season_value + 3) % 4
     season_event_angles = [pi / 2, 0, 3 * pi / 2, pi]
-    return _OrbitDateAndAngle(
+    return OrbitDateAndAngle(
         season_events[skyfield_season_value].utc_datetime().date(),
         season_event_angles[skyfield_season_value],
     )
