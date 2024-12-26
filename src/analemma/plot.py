@@ -176,7 +176,7 @@ def plot_season_event_sun_path(
     num_times = 1000
 
     if not year:
-        year = datetime.today().year
+        year = datetime.date.today().year
 
     season_event = orbit.season_event_info(season.value, year)
 

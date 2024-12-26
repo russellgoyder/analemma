@@ -29,15 +29,16 @@ pip install analemma
 
 ```python
 import matplotlib.pyplot as plt
-from analemma import orbit, plot as ap
+from analemma import orbit, plot as aplot, geometry as geom
 
 earth = orbit.PlanetParameters.earth()
-vertical_dial = ap.DialParameters.vertical(location='Cambridge, UK')
+vertical_dial = geom.DialParameters.vertical(latitude=52.5) # Cambridge, UK
 
 fig, ax = plt.subplots()
+ax.grid()
 ax.axis("equal")
 
-ap.plot_analemma(ax, earth, vertical_dial)
+aplot.plot_hourly_analemmas(ax, earth, vertical_dial)
 ```
 
 See [Analemma Plots](nb/sundial_plots.md) for complete examples showing various analemmas.
