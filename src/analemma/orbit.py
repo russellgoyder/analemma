@@ -61,6 +61,19 @@ class PlanetParameters:
         self.T_sd = self.N / (self.N + 1) * self.T_d
         self.Om = pi / self.T_y * self.a
 
+    def clone_with_eccentricity(self, e: float):
+        """
+        Return a new instance with the same parameters but a different eccentricity
+        """
+        return PlanetParameters(
+            N=self.N,
+            T_d=self.T_d,
+            rho=self.rho,
+            alpha=self.alpha,
+            a=self.a,
+            e=e,
+        )
+
     def daily_noons(self) -> np.array:
         """
         Daily time samples in seconds from noon at perihelion
@@ -117,17 +130,16 @@ An instance of PlanetParameters representing Earth
 """
 
 
-def _kepler_params(planet: PlanetParameters = earth, e: float = None):
+def _kepler_params(planet: PlanetParameters = earth):
     a = planet.a
-    if not e:
-        e = planet.e
+    e = planet.e
     b = a * math.sqrt(1 - e**2)  # semi-minor axis
     A = math.sqrt((a + b) / 2)
     B = math.sqrt((a - b) / 2)
     return A, B, planet.Om, planet.T_y
 
 
-def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
+def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Calculate orbital time given time parameter, t(s)
 
@@ -136,7 +148,7 @@ def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = 
         planet: Planet whose orbit is being analyzed
         e: Optional override for the orbit's eccentricity
     """
-    A, B, Om, T_y = _kepler_params(planet, e)
+    A, B, Om, T_y = _kepler_params(planet)
     return (A**2 + B**2) * s + A * B / Om * sin(2 * Om * s) + T_y / 2
 
 
@@ -159,34 +171,33 @@ Cache of interpolation data used when inverting the relationship between orbital
 """
 
 
-def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
+def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Invert t(s), the relationship of orbital time t with the parameter in the spinor
     treatment of the Kepler problem, s, to give s(t).
 
     Keep a cache of interpolants, one per eccentricity.
     """
-    if not e:
-        e = planet.e
+    e = planet.e
     k = _key(e)
     if k not in _t_finegrained.keys():
-        _t_finegrained[k] = orbital_time(_s_finegrained, planet, e)
+        _t_finegrained[k] = orbital_time(_s_finegrained, planet)
     return np.interp(t, _t_finegrained[k], _s_finegrained)
 
 
-def orbital_radius(s: npt.ArrayLike, planet: PlanetParameters = earth, e: float = None):
+def orbital_radius(s: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Calculate orbital radial coordinate given spinor time parameter, r(s)
     """
-    A, B, Om, _ = _kepler_params(planet, e)
+    A, B, Om, _ = _kepler_params(planet)
     return A**2 + B**2 + 2 * A * B * cos(2 * Om * s)
 
 
-def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth, e=None):
+def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth):
     """
     Calculate orbital angular coordinate given time parameter, phi(s)
     """
-    A, B, Om, _ = _kepler_params(planet, e)
+    A, B, Om, _ = _kepler_params(planet)
     tanSigY = (A**2 - B**2) * sin(2 * Om * s)
     tanSigX = (A**2 + B**2) * cos(2 * Om * s) + 2 * A * B
     return np.arctan2(tanSigY, tanSigX) + pi
