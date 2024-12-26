@@ -303,8 +303,6 @@ def test_gnomon_shadow_projection():
     Check that $1 + \lambda\cos(\Xi)$ is equal to the projection of $w$ onto $g$
     """
 
-    # TODO fixtures
-
     gn = frame.gnomon("n", zero_decl=True)
     p = sp.Symbol("p")
 

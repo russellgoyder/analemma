@@ -494,7 +494,7 @@ def annotate_analemma_with_hour(
 
 def _reorder_legend_info(legend_info):
     """
-    TODO
+    Move Winter to the end of the list
     """
     if legend_info[0][1] == "Winter":
         winter_entry = legend_info.pop(0)
