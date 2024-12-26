@@ -152,23 +152,14 @@ def orbital_time(s: npt.ArrayLike, planet: PlanetParameters = earth):
     return (A**2 + B**2) * s + A * B / Om * sin(2 * Om * s) + T_y / 2
 
 
-_s_finegrained = np.linspace(-pi / earth.Om / 2, pi / earth.Om / 2, 10_000)
-"""
-1-d grid used when inverting the relationship between orbital and spinor time
-"""
+_cache_max_size = 50
 
 
-def _key(e: float) -> int:
-    """
-    The first four significant figures of the given number
-    """
-    return int(10_000 * e)
-
-
-_t_finegrained = {_key(earth.e): orbital_time(_s_finegrained)}
-"""
-Cache of interpolation data used when inverting the relationship between orbital and spinor time 
-"""
+@lru_cache(maxsize=_cache_max_size)
+def _finegrained_interp_points(planet: PlanetParameters):
+    s_points = np.linspace(-pi / planet.Om / 2, pi / planet.Om / 2, 10_000)
+    t_points = orbital_time(s_points, planet)
+    return s_points, t_points
 
 
 def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth):
@@ -178,11 +169,8 @@ def spinor_time(t: npt.ArrayLike, planet: PlanetParameters = earth):
 
     Keep a cache of interpolants, one per eccentricity.
     """
-    e = planet.e
-    k = _key(e)
-    if k not in _t_finegrained.keys():
-        _t_finegrained[k] = orbital_time(_s_finegrained, planet)
-    return np.interp(t, _t_finegrained[k], _s_finegrained)
+    s_points, t_points = _finegrained_interp_points(planet)
+    return np.interp(t, t_points, s_points)
 
 
 def orbital_radius(s: npt.ArrayLike, planet: PlanetParameters = earth):
@@ -201,9 +189,6 @@ def orbital_angle(s: npt.ArrayLike, planet: PlanetParameters = earth):
     tanSigY = (A**2 - B**2) * sin(2 * Om * s)
     tanSigX = (A**2 + B**2) * cos(2 * Om * s) + 2 * A * B
     return np.arctan2(tanSigY, tanSigX) + pi
-
-
-_cache_max_size = 50
 
 
 @lru_cache(maxsize=_cache_max_size)
