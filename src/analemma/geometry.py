@@ -372,7 +372,11 @@ def find_daytime_offsets(planet: orbit.PlanetParameters, dial: DialParameters):
 
 
 class Season(Enum):
-    "Start in Winter because orbit time starts at perihelion"
+    """
+    Enum to encode the four seasons of the year as seen temperate latitudes in the northern hemisphere.
+
+    Start in Winter because orbit time starts at perihelion
+    """
 
     Winter = 0
     Spring = 1
