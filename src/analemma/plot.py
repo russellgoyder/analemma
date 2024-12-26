@@ -343,21 +343,6 @@ def _analemma_point_coordinates(
     return x, y, on_dial, above_dial_plane
 
 
-_sun_times_cache = {}
-
-
-def _get_sun_times(planet: orbit.PlanetParameters, dial: geom.DialParameters):
-    key = (id(planet), id(dial))
-    if key not in _sun_times_cache.keys():
-        _sun_times_cache[key] = [
-            geom.find_sun_rise_noon_set_relative_to_dial_face(
-                days_since_perihelion, planet, dial
-            )
-            for days_since_perihelion in np.arange(0, 365)
-        ]
-    return _sun_times_cache[key]
-
-
 def _solstice_days(planet: orbit.PlanetParameters, dial: geom.DialParameters):
     _, sines = geom.sunray_dialface_angle_over_one_year(planet, dial)
     return (np.argmax(sines), np.argmin(sines))
