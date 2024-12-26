@@ -203,14 +203,19 @@ def _skyfield_season_events(year: int):
 
 
 @dataclass
-class _OrbitDateAndAngle:
+class OrbitDateAndAngle:
+    """
+    Pairing of a date and the corresponding orbit angle
+    """
+
     date: datetime.date
     sigma: float
 
 
-def season_event_info(season_value: int, year: int):
+def season_event_info(season_value: int, year: int) -> OrbitDateAndAngle:
     """
-    TODO also return type
+    Return the date and orbit angle for an equinox or solstice in a given year, identified by
+    the season's value as per [analemma.geometry.Season][].
     """
     season_events = _skyfield_season_events(year)
     # S S A W (seasons)
@@ -218,7 +223,7 @@ def season_event_info(season_value: int, year: int):
     # 0 1 2 3 (Skyfield)
     skyfield_season_value = (season_value + 3) % 4
     season_event_angles = [pi / 2, 0, 3 * pi / 2, pi]
-    return _OrbitDateAndAngle(
+    return OrbitDateAndAngle(
         season_events[skyfield_season_value].utc_datetime().date(),
         season_event_angles[skyfield_season_value],
     )
