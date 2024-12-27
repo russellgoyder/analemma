@@ -13,7 +13,6 @@ nav:
  - Sunrise and Sunset: 'nb/sunrise_and_sunset.md'
  - Orbit Analysis: 'nb/orbit_analysis.md'
  - Deriving the Analemma:
-   - Overview: 'nb/overview.md'
    - Setup and Definitions: 'nb/sundial_setup.md'
    - The Hour Angle: 'nb/hour_angle.md'
    - The Shadow Angle: 'nb/shadow_angle.md'
