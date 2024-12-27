@@ -52,14 +52,14 @@ The analemma is the path traced by the shadow on a sundial (or the sun in the sk
 
 `analemma` uses [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) to encode and present the mathematics of the analemma in a series of notebooks:
 
- * [Setup and Definitions](nb/sundial_setup.md): geometry, location and orientation of the gnomon
+ * [Setup and Definitions](nb/sundial_setup.md) covers the geometry, location and orientation of the gnomon
    (shadow-casting stick) and face of the sundial.
- * [The Hour Angle](nb/hour_angle.md): generalized formula for the solar hour angle, defined
+ * [The Hour Angle](nb/hour_angle.md) derives a generalized formula for the solar hour angle, defined
    as the angle between the face of the dial and the plane containing the sun ray and the gnomon.
- * [The Shadow Angle](nb/shadow_angle.md): unit vector parallel to the shadow and how it moves in time
- * [The Shadow Length](nb/shadow_length.md): the length of the shadow
- * [The Analemma](nb/analemma.md): parametric expression for the analemma as the coordinates of the tip of a sundial's shadow
- * [Comparison with Rohr's book](nb/rohr_comparison.md): comparison with known results from a standard text
+ * [The Shadow Angle](nb/shadow_angle.md) calculates unit vector parallel to the shadow and how it moves in time
+ * [The Shadow Length](nb/shadow_length.md) finds the length of the shadow
+ * [The Analemma](nb/analemma.md) presents a parametric expression for the analemma as the coordinates of the tip of a sundial's shadow
+ * [Comparison with Rohr's book](nb/rohr_comparison.md) performs a comparison with known results from a standard text
 
 
 ## Project Links
