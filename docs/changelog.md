@@ -1,6 +1,14 @@
 
 # Changelog
 
+## v0.3
+
+Improved test coverage.
+
+Added plots for common dial types.
+
+Enabled Binder for notebooks.
+
 ## v0.2
 
 Integated [Skyfield](https://rhodesmill.org/skyfield/) for season events and apsides.
