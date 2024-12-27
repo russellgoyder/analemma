@@ -46,7 +46,7 @@ See [Analemma Plots](nb/sundial_plots.md) for complete examples showing various 
 For the connection between the angle of the sun, the date, and the time, see [The Equation of
 Time](nb/equation_of_time.md), [Sunrise and Sunset](nb/sunrise_and_sunset.md), and [Orbit Analysis](nb/orbit_analysis.md).
 
-## Background
+## The Mathematics of Sundials and the Analemma
 
 The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. In this package, the analemma is expressed in an exact parametric expression whose derivation was first presented in 2006. See the [project homepage](https://russellgoyder.github.io/sundial-latex/) for more information.
 
