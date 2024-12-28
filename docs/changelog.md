@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v0.3.1
+
+Fixed image links in API reference.
+
 ## v0.3
 
 Improved test coverage.
