@@ -42,7 +42,7 @@ def base(base_symbol: str) -> Tuple[mv.Mv]:
 
     See also [Fixed Stars and Earth Frames](../nb/sundial_setup.md#fixed-stars-and-earth-frames)
 
-    ![Earth's orientation and orbit](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/MainArena.png?token=GHSAT0AAAAAAB73Q3JM6JGFDMRHPPAJKRQ2ZAWFO7Q "Earth's orientation and orbit.").
+    ![Earth's orientation and orbit](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/MainArena.png "Earth's orientation and orbit.").
 
     Parameters:
         base_symbol: Symbol to identify the basis vectors, eg supplying '$e$' gives $e_1, e_2, e_3$
@@ -105,7 +105,7 @@ def planet(
 
     and applying them together as $R_\psi R_\alpha$ to the fixed $\{e_i\}$ frame from [analemma.algebra.frame.base][].
 
-    ![Earth's orientation and orbit](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/MainArena.png?token=GHSAT0AAAAAAB73Q3JM6JGFDMRHPPAJKRQ2ZAWFO7Q "Earth's orientation and orbit.").
+    ![Earth's orientation and orbit](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/MainArena.png "Earth's orientation and orbit.").
 
     See also [Fixed Stars and Earth Frames](../nb/sundial_setup.md#fixed-stars-and-earth-frames)
 
@@ -136,7 +136,7 @@ def surface(latitude_symbol: sp.Symbol = theta) -> Tuple[mv.Mv]:
 
     See also [Surface Frame](../nb/sundial_setup.md#surface-frame)
 
-    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/SurfaceFrame.png?token=GHSAT0AAAAAAB73Q3JNXNOAJWYLCUINTVLUZAWF6JQ "Frame embedded in Earth's surface.").
+    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/SurfaceFrame.png "Frame embedded in Earth's surface.").
 
     Parameters:
         latitude_symbol: $90^\circ$ minus the latitude at which the frame is embedded
@@ -255,7 +255,7 @@ def dial(
 
     See also [Dial Face and Gnomon](../nb/sundial_setup.md#dial-face-and-gnomon)
 
-    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/DialFrame.png?token=GHSAT0AAAAAAB73Q3JNJN46TIEHP3QCWWGYZAWGADA "Frame embedded in the sundial's face.").
+    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/DialFrame.png "Frame embedded in the sundial's face.").
 
     Parameters:
         incl_symbol: The inclination angle of the dial face relative to the surface frame
@@ -328,7 +328,7 @@ def gnomon(
 
     See also [Dial Face and Gnomon](../nb/sundial_setup.md#dial-face-and-gnomon)
 
-    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/Gnomon.png?token=GHSAT0AAAAAAB73Q3JNHJMDP6T55SWPTQFGZAWGBNA "The gnomon.").
+    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/Gnomon.png "The gnomon.").
 
     Parameters:
         base_symbol: Symbol identifing the basis on which to project the gnomon
