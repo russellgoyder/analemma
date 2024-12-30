@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v0.3.2
+
+Added exact parametric expression to [Equation of Time](nb/equation_of_time.md).
+
 ## v0.3.1
 
 Fixed image links in API reference.
