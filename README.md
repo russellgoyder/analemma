@@ -11,3 +11,6 @@ The analemma is the beautiful double-loop path traced by the shadow on a sundial
  * Issue Tracker: https://github.com/russellgoyder/sundial/issues
  * Discussions: https://github.com/russellgoyder/sundial/discussions
  * Changelog: https://analemma.readthedocs.io/en/stable/changelog
+
+---------------------
+&copy; [Russell Goyder](https://russellgoyder.ca)
