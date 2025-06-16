@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2.8b -->
+
+<!-- CreationDate: 2023-03-04 12:41:07 -->
+
+<!-- Magnification: 1.05 -->
+
+<svg
+   width="294pt"
+   height="308pt"
+   viewBox="1026 510 4654 4875"
+   version="1.1"
+   id="svg122"
+   sodipodi:docname="DialFrame.svg"
+   inkscape:version="1.2.2 (b0a8486, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs126" />
+  <sodipodi:namedview
+     id="namedview124"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="2.5008117"
+     inkscape:cx="195.93638"
+     inkscape:cy="205.33333"
+     inkscape:window-width="1390"
+     inkscape:window-height="1205"
+     inkscape:window-x="60"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g120" />
+  <g
+     fill="none"
+     id="g120">
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3469"
+       y="2530"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text18">i</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="5369"
+       y="2463"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text20">n</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3480"
+       y="863"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text22">n</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3636"
+       y="941"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="192"
+       text-anchor="start"
+       id="text24">3</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="1041"
+       y="2219"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text26">n</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="1197"
+       y="2297"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="192"
+       text-anchor="start"
+       id="text28">2</text>
+    <!-- Arc -->
+    <path
+       d="M 3368,2111 A 648 648 0 0 1 3749 2507"
+       stroke="#0000d1"
+       stroke-width="15px"
+       id="path30" />
+    <!-- Arc -->
+    <path
+       d="M 2530,3710 A 1539 1539 0 0 0 3826 3710"
+       stroke="#0000d1"
+       stroke-width="15px"
+       id="path32" />
+    <!-- Line -->
+    <defs
+       id="defs37">
+      <clipPath
+         id="cp0">
+        <path
+           clip-rule="evenodd"
+           d="M 1026,510 H 5680 V 5385 H 1026 z   M 3303,1453 3353,1403 3403,1453 3364,1153 3343,1153z"
+           id="path34" />
+      </clipPath>
+    </defs>
+    <polyline
+       points=" 3353,5363 3353,1163"
+       clip-path="url(#cp0)"
+       stroke="#000000"
+       stroke-width="15px"
+       id="polyline39" />
+    <!-- Forward arrow to point 3353,1163 -->
+    <polygon
+       points=" 3403,1453 3353,1203 3303,1453 3353,1403 3403,1453"
+       stroke="#000000"
+       stroke-width="15px"
+       stroke-miterlimit="8"
+       fill="#000000"
+       id="polygon41" />
+    <!-- Line -->
+    <defs
+       id="defs46">
+      <clipPath
+         id="cp1">
+        <path
+           clip-rule="evenodd"
+           d="M 1026,510 H 5680 V 5385 H 1026 z   M 3303,1453 3353,1403 3403,1453 3364,1153 3343,1153z   M 1700,2630 1672,2565 1737,2537 1444,2461 1436,2481z"
+           id="path43" />
+      </clipPath>
+    </defs>
+    <polyline
+       points=" 1450,2475 5658,4175"
+       clip-path="url(#cp1)"
+       stroke="#000000"
+       stroke-width="15px"
+       id="polyline48" />
+    <!-- Backward arrow to point 1450,2475 -->
+    <polygon
+       points=" 1737,2537 1487,2490 1700,2630 1672,2565 1737,2537"
+       stroke="#000000"
+       stroke-width="15px"
+       stroke-miterlimit="8"
+       fill="#000000"
+       id="polygon50" />
+    <!-- Line -->
+    <defs
+       id="defs55">
+      <clipPath
+         id="cp2">
+        <path
+           clip-rule="evenodd"
+           d="M 1026,510 H 5680 V 5385 H 1026 z   M 3303,1453 3353,1403 3403,1453 3364,1153 3343,1153z   M 5026,2221 5094,2240 5075,2308 5316,2125 5306,2107z"
+           id="path52" />
+      </clipPath>
+    </defs>
+    <polyline
+       points=" 5302,2121 1327,4391"
+       clip-path="url(#cp2)"
+       stroke="#000000"
+       stroke-width="15px"
+       id="polyline57" />
+    <!-- Backward arrow to point 5302,2121 -->
+    <polygon
+       points=" 5075,2308 5268,2141 5026,2221 5094,2240 5075,2308"
+       stroke="#000000"
+       stroke-width="15px"
+       stroke-miterlimit="8"
+       fill="#000000"
+       id="polygon59" />
+    <!-- Line -->
+    <polyline
+       points=" 2512,5172 1294,2390"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline61" />
+    <!-- Line -->
+    <polyline
+       points=" 5497,4424 2512,5165"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline63" />
+    <!-- Line -->
+    <polyline
+       points=" 5490,4431 4269,1676"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline65" />
+    <!-- Line -->
+    <polyline
+       points=" 4261,1675 1270,2392"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline67" />
+    <!-- Line -->
+    <defs
+       id="defs72">
+      <clipPath
+         id="cp3">
+        <path
+           clip-rule="evenodd"
+           d="M 1026,510 H 5680 V 5385 H 1026 z   M 3826,2278 3894,2260 3912,2329 4029,2049 4011,2039z   M 5026,2221 5094,2240 5075,2308 5316,2125 5306,2107z"
+           id="path69" />
+      </clipPath>
+    </defs>
+    <polyline
+       points=" 2914,3944 4015,2053"
+       clip-path="url(#cp3)"
+       stroke="#0000d1"
+       stroke-width="15px"
+       id="polyline74" />
+    <!-- Forward arrow to point 4015,2053 -->
+    <polygon
+       points=" 3912,2329 3995,2087 3826,2278 3894,2260 3912,2329"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-miterlimit="8"
+       fill="#0000d1"
+       id="polygon76" />
+    <!-- Line -->
+    <defs
+       id="defs81">
+      <clipPath
+         id="cp4">
+        <path
+           clip-rule="evenodd"
+           d="M 1026,510 H 5680 V 5385 H 1026 z   M 2184,3558 2124,3521 2161,3460 1878,3569 1883,3590z   M 5026,2221 5094,2240 5075,2308 5316,2125 5306,2107z"
+           id="path78" />
+      </clipPath>
+    </defs>
+    <polyline
+       points=" 4784,2879 1891,3577"
+       clip-path="url(#cp4)"
+       stroke="#0000d1"
+       stroke-width="15px"
+       id="polyline83" />
+    <!-- Forward arrow to point 1891,3577 -->
+    <polygon
+       points=" 2161,3460 1930,3568 2184,3558 2124,3521 2161,3460"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-miterlimit="8"
+       fill="#0000d1"
+       id="polygon85" />
+    <!-- Line -->
+    <defs
+       id="defs90">
+      <clipPath
+         id="cp5">
+        <path
+           clip-rule="evenodd"
+           d="M 1026,510 H 5680 V 5385 H 1026 z   M 2916,2374 2941,2308 3007,2334 2849,2075 2830,2084z   M 5026,2221 5094,2240 5075,2308 5316,2125 5306,2107z"
+           id="path87" />
+      </clipPath>
+    </defs>
+    <polyline
+       points=" 3782,4205 2844,2089"
+       clip-path="url(#cp5)"
+       stroke="#0000d1"
+       stroke-width="15px"
+       id="polyline92" />
+    <!-- Forward arrow to point 2844,2089 -->
+    <polygon
+       points=" 3007,2334 2860,2125 2916,2374 2941,2308 3007,2334"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-miterlimit="8"
+       fill="#0000d1"
+       id="polygon94" />
+    <!-- Line -->
+    <polyline
+       points=" 4015,2053 4015,4777"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline96" />
+    <!-- Line -->
+    <polyline
+       points=" 3352,3239 4015,4770"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline98" />
+    <!-- Line -->
+    <polyline
+       points=" 3902,3768 3895,3599 4001,3690"
+       stroke="#0000d1"
+       stroke-width="15px"
+       id="polyline100" />
+    <!-- Line -->
+    <polyline
+       points=" 3352,3232 4008,3895"
+       stroke="#0000d1"
+       stroke-width="15px"
+       stroke-dasharray="60 60"
+       id="polyline102" />
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="1961.7577"
+       y="3417"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="192px"
+       text-anchor="start"
+       id="text104">2</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="1746"
+       y="3329"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text106">m</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="2460"
+       y="2429"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text108">m</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="4285.1392"
+       y="2289.123"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="192px"
+       text-anchor="start"
+       id="text110">3</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="4082"
+       y="2192"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text112">m</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="2659.8916"
+       y="2517.3721"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="192px"
+       text-anchor="start"
+       id="text114"
+       inkscape:transform-center-x="925.75045"
+       inkscape:transform-center-y="821.30681">1</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3066"
+       y="4183"
+       fill="#0000d1"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="240"
+       text-anchor="start"
+       id="text116">d</text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="5525"
+       y="2541"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="192"
+       text-anchor="start"
+       id="text118">1</text>
+  </g>
+</svg>
