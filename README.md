@@ -55,7 +55,7 @@ The `analemma` package implements the mathematics of sundial and orbits for an a
 
 ### Reference Article
 
-The analemma is derived from first principles in [The sundial problem from a new angle - Russell Goyder.pdf](<docs/paper/The sundial problem from a new angle - Russell Goyder.pdf>) - the latest version of a paper [originally published](https://iopscience.iop.org/article/10.1088/0143-0807/27/2/023) in the [European Journal of Physics](https://iopscience.iop.org/journal/0143-0807) in 2006. The LaTeX source and figures for the paper is in the [analemma repository](https://github.com/russellgoyder/analemma/docs/paper).
+The analemma is derived from first principles in [The sundial problem from a new angle - Russell Goyder.pdf](<docs/paper/The sundial problem from a new angle - Russell Goyder.pdf>) - the latest version of a paper [originally published](https://iopscience.iop.org/article/10.1088/0143-0807/27/2/023) in the [European Journal of Physics](https://iopscience.iop.org/journal/0143-0807) in 2006. The LaTeX source and figures for the paper are in the [analemma repository](https://github.com/russellgoyder/analemma/tree/main/docs/paper).
 
 ### Jupyter Notebooks
 
@@ -67,7 +67,7 @@ You can view and run Jupyter notebooks which reproduce all derivations and calcu
  * [Orbits](https://analemma.readthedocs.io/en/stable/nb/orbit_analysis/)
 
 
-I used geometric algebra for this work and have a [cheat sheet](https://russellgoyder.github.io/geometric-algebra-cheat-sheet/) which could you useful if you familiar with the topic.
+I used geometric algebra for this work and have a [cheat sheet](https://russellgoyder.ca/geometric-algebra-cheat-sheet/) which could you useful if you familiar with the topic.
 
 ### Presentations
 
