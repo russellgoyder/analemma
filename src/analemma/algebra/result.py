@@ -331,7 +331,7 @@ def shadow_triangle_solution(
 
     See [Solving the Shadow Triangle](../nb/shadow_length.md#solving-the-shadow-triangle)
 
-    ![](https://raw.githubusercontent.com/russellgoyder/sundial-latex/main/figs/ShadowTriangle.png "The shadow triangle.").
+    ![](https://raw.githubusercontent.com/russellgoyder/analemma/main/docs/paper/figs/ShadowTriangle.png "The shadow triangle.").
 
     Parameters:
         latitude_symbol: $90^\circ$ minus the latitude at which the frame is embedded

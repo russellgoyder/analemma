@@ -48,7 +48,7 @@ Time](nb/equation_of_time.md), [Sunrise and Sunset](nb/sunrise_and_sunset.md), a
 
 ## The Mathematics of Sundials and the Analemma
 
-The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. In this package, the analemma is expressed in an exact parametric expression whose derivation was first presented in 2006. See the [project homepage](https://russellgoyder.ca/sundial-latex/) for more information.
+The analemma is the path traced by the shadow on a sundial (or the sun in the sky) when observed at the same time each day throughout one year. In this package, the analemma is expressed in an exact parametric expression whose derivation was first presented in 2006. See the [project homepage](https://russellgoyder.ca/analemma/) for more information.
 
 `analemma` uses [SymPy](https://www.sympy.org/en/index.html) and [GAlgebra](https://github.com/pygae/galgebra) to encode and present the mathematics of the analemma in a series of notebooks:
 
@@ -64,5 +64,5 @@ The analemma is the path traced by the shadow on a sundial (or the sun in the sk
 
 ## Project Links
 
- * [Homepage](https://russellgoyder.ca/sundial-latex/)
- * [Repository](https://github.com/russellgoyder/sundial)
+ * [Homepage](https://russellgoyder.ca/analemma/)
+ * [Repository](https://github.com/russellgoyder/analemma)
