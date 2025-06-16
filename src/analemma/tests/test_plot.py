@@ -33,23 +33,16 @@ def test_solstices(earth, camdial):
     december_solstice = np.argmin(day_lengths)
     june_solstice = np.argmax(day_lengths)
 
-    assert orbit.orbit_day_to_date(0) == datetime.date.fromisoformat("2024-01-03")
-    assert orbit.orbit_day_to_date(june_solstice) == datetime.date.fromisoformat(
-        "2024-06-21"
-    )
-    assert orbit.orbit_day_to_date(december_solstice) == datetime.date.fromisoformat(
-        "2024-12-21"
-    )
+    orbit_start = datetime.date.fromisoformat("2025-01-04")
+    assert orbit.orbit_day_to_date(0) == orbit_start
+    june_solstice_answer = datetime.date.fromisoformat("2025-06-23")
+    assert orbit.orbit_day_to_date(june_solstice) == june_solstice_answer
+    dec_solstice_answer = datetime.date.fromisoformat("2025-12-23")
+    assert orbit.orbit_day_to_date(december_solstice) == dec_solstice_answer
 
-    assert orbit.orbit_date_to_day(datetime.date.fromisoformat("2024-01-03")) == 0
-    assert (
-        orbit.orbit_date_to_day(datetime.date.fromisoformat("2024-06-21"))
-        == june_solstice
-    )
-    assert (
-        orbit.orbit_date_to_day(datetime.date.fromisoformat("2024-12-21"))
-        == december_solstice
-    )
+    assert orbit.orbit_date_to_day(orbit_start) == 0
+    assert orbit.orbit_date_to_day(june_solstice_answer) == june_solstice
+    assert orbit.orbit_date_to_day(dec_solstice_answer) == december_solstice
 
     arbitrary_date = datetime.date.fromisoformat("2024-05-26")
     assert (
