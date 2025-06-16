@@ -45,8 +45,8 @@ pip install analemma
 | Changelog | [https://analemma.readthedocs.io/en/stable/changelog](https://analemma.readthedocs.io/en/stable/changelog) |
 
 <p float="left">
-  <img src="figs/MainArena.png" height="250"/>
-  <img src="figs/ArbitraryDial.png" height="250" /> 
+  <img src="docs/paper/figs/MainArena.png" height="250"/>
+  <img src="docs/paper/figs/ArbitraryDial.png" height="250" /> 
 </p>
 
 ## Resources
