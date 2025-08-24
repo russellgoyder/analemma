@@ -71,7 +71,9 @@ I used geometric algebra for this work and have a [cheat sheet](https://russellg
 
 ### Presentations
 
-I presented this work in [part 1](https://youtu.be/gO77fMRwn5E) and [part 2](https://youtu.be/w6-A_uJp15M) of a [metauni seminar](https://metauni.org/anythingatall/).
+In August 2025 I presented this work at the annual conference of the [North American Sundial Society](https://sundials.org/) - see [The Sundial Problem from a New Angle - Russell Goyder - NASS 2025.pdf](<docs/talks/The Sundial Problem from a New Angle - Russell Goyder - NASS 2025.pdf>).
+
+I also presented it in [part 1](https://youtu.be/gO77fMRwn5E) and [part 2](https://youtu.be/w6-A_uJp15M) of a [metauni seminar](https://metauni.org/anythingatall/).
 
 ### Building the LaTeX source
 
