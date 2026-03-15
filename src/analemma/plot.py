@@ -188,7 +188,7 @@ def plot_season_event_sun_path(
     ):
         return []
 
-    orbit_day = orbit.orbit_date_to_day(season_event.date)
+    orbit_day = orbit.orbit_date_to_day(season_event.date, year=year)
     day_type = _determine_day_type(planet, dial, orbit_day)
     if day_type == DayType.SunNeverRises:
         return []
@@ -340,7 +340,7 @@ def _analemma_point_coordinates(
     solstice_time = np.array([planet.T_d * days_since_perihelion + hour_offset * 3600])
     above_dial_plane = geom.sin_sunray_dialface_angle(solstice_time, planet, dial) > 0
     x, y, on_dial = geom.calc_raw_analemma_points(solstice_time, planet, dial)
-    return x, y, on_dial, above_dial_plane
+    return x.item(), y.item(), on_dial.item(), above_dial_plane.item()
 
 
 def _solstice_days(planet: orbit.PlanetParameters, dial: geom.DialParameters):
